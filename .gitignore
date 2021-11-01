@@ -1,0 +1,10 @@
+__pycache__
+.idea
+.mypy_cache
+venv/
+*.zip
+data/
+tmp/
+scripts/
+dist/
+targetran.egg-info/
