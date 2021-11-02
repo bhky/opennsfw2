@@ -182,7 +182,7 @@ def make_open_nsfw_model(
     x = layers.AveragePooling2D(pool_size=7, strides=1,
                                 padding="valid", name="pool")(x)
 
-    x = layers.Reshape((-1, 1024))(x)
+    x = layers.Flatten()(x)
 
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
     output = tf.nn.softmax(logits, name="predictions")
