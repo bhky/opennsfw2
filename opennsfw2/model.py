@@ -23,7 +23,7 @@ def _get_weights(layer_name: str, field_name: str) -> np.ndarray:
     if field_name not in w:
         raise ValueError(f"No field {field_name} in layer {layer_name}.")
 
-    return w[field_name]
+    return w[field_name].astype(np.float32)
 
 
 def _fully_connected(name: str, units: int) -> layers.Dense:
@@ -31,10 +31,10 @@ def _fully_connected(name: str, units: int) -> layers.Dense:
         name=name,
         units=units,
         kernel_initializer=tf.constant_initializer(
-            _get_weights(name, "weights"), dtype=tf.float32
+            _get_weights(name, "weights")
         ),
         bias_initializer=tf.constant_initializer(
-            _get_weights(name, "biases"), dtype=tf.float32
+            _get_weights(name, "biases")
         )
     )
 
@@ -53,10 +53,10 @@ def _conv2d(
         strides=stride,
         padding=padding,
         kernel_initializer=tf.constant_initializer(
-            _get_weights(name, "weights"), dtype=tf.float32
+            _get_weights(name, "weights")
         ),
         bias_initializer=tf.constant_initializer(
-            _get_weights(name, "biases"), dtype=tf.float32
+            _get_weights(name, "biases")
         )
     )
 
@@ -66,24 +66,24 @@ def _batch_norm(name: str) -> layers.BatchNormalization:
         name=name,
         epsilon=1e-05,  # Default used in Caffe.
         gamma_initializer=tf.constant_initializer(
-            _get_weights(name, "scale"), dtype=tf.float32
+            _get_weights(name, "scale")
         ),
         beta_initializer=tf.constant_initializer(
-            _get_weights(name, "offset"), dtype=tf.float32
+            _get_weights(name, "offset")
         ),
         moving_mean_initializer=tf.constant_initializer(
-            _get_weights(name, "mean"), dtype=tf.float32
+            _get_weights(name, "mean")
         ),
         moving_variance_initializer=tf.constant_initializer(
-            _get_weights(name, "variance"), dtype=tf.float32
+            _get_weights(name, "variance")
         ),
     )
 
 
 def _conv_block(
-        inputs: tf.Tensor,
         stage: int,
         block: int,
+        inputs: tf.Tensor,
         nums_filters: Tuple[int, int, int],
         kernel_size: int = 3,
         stride: int = 2,
@@ -139,9 +139,9 @@ def _conv_block(
 
 
 def _identity_block(
-        inputs: tf.Tensor,
         stage: int,
         block: int,
+        inputs: tf.Tensor,
         nums_filters: Tuple[int, int, int],
         kernel_size: int
 ) -> tf.Tensor:
@@ -182,3 +182,81 @@ def _identity_block(
     x = layers.Add()([x, inputs])
 
     return tf.nn.relu(x)
+
+
+def make_open_nsfw_model_and_load_weights(
+        input_shape: Tuple[int, int, int] = (224, 224, 3)
+) -> tf.keras.Model:
+    image_input = layers.Input(shape=input_shape, name="input")
+    x = image_input
+
+    x = tf.pad(x, [[0, 0], [3, 3], [3, 3], [0, 0]], "CONSTANT")
+    x = _conv2d("conv_1", num_filters=64, kernel_size=7, stride=2,
+                padding="valid")(x)
+
+    x = _batch_norm("bn_1")(x)
+    x = tf.nn.relu(x)
+
+    x = layers.MaxPooling2D(pool_size=3, strides=2, padding="same")(x)
+
+    x = _conv_block(stage=0, block=0, inputs=x,
+                    nums_filters=(32, 32, 128),
+                    kernel_size=3, stride=1)
+
+    x = _identity_block(stage=0, block=1, inputs=x,
+                        nums_filters=(32, 32, 128), kernel_size=3)
+    x = _identity_block(stage=0, block=2, inputs=x,
+                        nums_filters=(32, 32, 128), kernel_size=3)
+
+    x = _conv_block(stage=1, block=0, inputs=x,
+                    nums_filters=(64, 64, 256),
+                    kernel_size=3, stride=2)
+    x = _identity_block(stage=1, block=1, inputs=x,
+                        nums_filters=(64, 64, 256), kernel_size=3)
+    x = _identity_block(stage=1, block=2, inputs=x,
+                        nums_filters=(64, 64, 256), kernel_size=3)
+    x = _identity_block(stage=1, block=3, inputs=x,
+                        nums_filters=(64, 64, 256), kernel_size=3)
+
+    x = _conv_block(stage=2, block=0, inputs=x,
+                    nums_filters=(128, 128, 512),
+                    kernel_size=3, stride=2)
+    x = _identity_block(stage=2, block=1, inputs=x,
+                        nums_filters=(128, 128, 512), kernel_size=3)
+    x = _identity_block(stage=2, block=2, inputs=x,
+                        nums_filters=(128, 128, 512), kernel_size=3)
+    x = _identity_block(stage=2, block=3, inputs=x,
+                        nums_filters=(128, 128, 512), kernel_size=3)
+    x = _identity_block(stage=2, block=4, inputs=x,
+                        nums_filters=(128, 128, 512), kernel_size=3)
+    x = _identity_block(stage=2, block=5, inputs=x,
+                        nums_filters=(128, 128, 512), kernel_size=3)
+
+    x = _conv_block(stage=3, block=0, inputs=x,
+                    nums_filters=(256, 256, 1024), kernel_size=3,
+                    stride=2)
+    x = _identity_block(stage=3, block=1, inputs=x,
+                        nums_filters=(256, 256, 1024),
+                        kernel_size=3)
+    x = _identity_block(stage=3, block=2, inputs=x,
+                        nums_filters=(256, 256, 1024),
+                        kernel_size=3)
+
+    x = layers.AveragePooling2D(pool_size=7, strides=1,
+                                padding="valid", name="pool")(x)
+
+    x = layers.Reshape((-1, 1024))(x)
+
+    logits = _fully_connected(name="fc_nsfw", units=2)(x)
+    output = tf.nn.softmax(logits, name="predictions")
+
+    model = tf.keras.Model(image_input, output)
+    return model
+
+
+def main() -> None:
+    model = make_open_nsfw_model_and_load_weights()
+
+
+if __name__ == "__main__":
+    main()
