@@ -256,6 +256,7 @@ def make_open_nsfw_model_and_load_weights(
 
 def main() -> None:
     model = make_open_nsfw_model_and_load_weights()
+    model.save_weights("../weights/open_nsfw_weights.h5", save_format="h5")
 
 
 if __name__ == "__main__":
