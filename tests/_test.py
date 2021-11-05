@@ -9,6 +9,9 @@ import numpy as np
 import opennsfw2 as n2
 
 
+MODEL = n2.make_open_nsfw_model()
+
+
 class TestModel(unittest.TestCase):
 
     def test_inference_simple_preprocessing(self) -> None:
@@ -22,8 +25,7 @@ class TestModel(unittest.TestCase):
         ])
         expected_scores = [0.001, 0.597]
 
-        model = n2.make_open_nsfw_model()
-        predictions = model.predict(images)
+        predictions = MODEL.predict(images)
         for expected_score, prediction in zip(expected_scores, predictions):
             score = prediction[1]
             self.assertAlmostEqual(expected_score, score, places=3)
@@ -39,8 +41,7 @@ class TestModel(unittest.TestCase):
         ])
         expected_scores = [0.012, 0.756]
 
-        model = n2.make_open_nsfw_model()
-        predictions = model.predict(images)
+        predictions = MODEL.predict(images)
         for expected_score, prediction in zip(expected_scores, predictions):
             score = prediction[1]
             self.assertAlmostEqual(expected_score, score, places=3)
