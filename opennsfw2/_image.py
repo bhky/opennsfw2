@@ -49,7 +49,7 @@ def load_and_preprocess_image(
 
     elif preprocessing == Preprocessing.SIMPLE:
         pil_image_resized = pil_image.resize((224, 224), resample=Image.BILINEAR)
-        image = np.array(pil_image_resized, dtype=np.float32)
+        image = np.array(pil_image_resized).astype(np.float32)
 
     else:
         raise ValueError("Invalid preprocessing option.")
