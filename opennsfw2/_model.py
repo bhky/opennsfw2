@@ -4,10 +4,16 @@ https://github.com/mdietrichstein/tensorflow-open_nsfw
 https://github.com/yahoo/open_nsfw
 """
 
+import os
+import gdown
+from pathlib import Path
 from typing import Optional, Tuple
 
 import tensorflow as tf  # type: ignore
 from tensorflow.keras import layers  # type: ignore
+
+
+WEIGHTS_URL = "https://github.com/bhky/opennsfw2/releases/download/v0.1.0/open_nsfw_weights.h5"
 
 
 def _batch_norm(name: str) -> layers.BatchNormalization:
@@ -120,9 +126,19 @@ def _identity_block(
     return tf.nn.relu(x)
 
 
+def _get_home_dir() -> str:
+    return str(os.getenv("OPENNSFW2_HOME", default=Path.home()))
+
+
+def _get_default_weights_path() -> str:
+    weights_file = "open_nsfw_weights.h5"
+    home_dir = _get_home_dir()
+    return os.path.join(home_dir, f".opennsfw2/weights/{weights_file}")
+
+
 def make_open_nsfw_model(
         input_shape: Tuple[int, int, int] = (224, 224, 3),
-        weights_path: Optional[str] = "weights/open_nsfw_weights.h5"
+        weights_path: Optional[str] = _get_default_weights_path()
 ) -> tf.keras.Model:
     image_input = layers.Input(shape=input_shape, name="input")
     x = image_input
@@ -188,6 +204,10 @@ def make_open_nsfw_model(
     output = tf.nn.softmax(logits, name="predictions")
 
     model = tf.keras.Model(image_input, output)
+
     if weights_path is not None:
+        if not os.path.isfile(weights_path):
+            print(f"Downloading pre-trained weights to: {weights_path}")
+            gdown.download(WEIGHTS_URL, weights_path, quiet=False)
         model.load_weights(weights_path)
     return model
