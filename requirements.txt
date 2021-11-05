@@ -1,1 +1,4 @@
+numpy>=1.14.0
+Pillow>=8.0.0
+scikit-image>=0.18.3
 tensorflow>=2.0.0
