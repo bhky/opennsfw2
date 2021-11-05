@@ -5,7 +5,7 @@ https://github.com/yahoo/open_nsfw
 """
 
 import os
-import gdown
+import gdown  # type: ignore
 from pathlib import Path
 from typing import Optional, Tuple
 
