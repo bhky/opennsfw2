@@ -191,11 +191,3 @@ def make_open_nsfw_model(
     if weights_path is not None:
         model.load_weights(weights_path)
     return model
-
-
-def main() -> None:
-    model = make_open_nsfw_model()
-
-
-if __name__ == "__main__":
-    main()
