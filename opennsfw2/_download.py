@@ -2,7 +2,7 @@
 Download utilities.
 """
 
-import gdown
+import gdown  # type: ignore
 import os
 
 from pathlib import Path
