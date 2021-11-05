@@ -5,9 +5,9 @@ Image utilities.
 import io
 from enum import auto, Enum
 
-import numpy as np
-import skimage.io
-from PIL import Image
+import numpy as np  # type: ignore
+import skimage.io  # type: ignore
+from PIL import Image  # type: ignore
 
 
 class Preprocessing(Enum):

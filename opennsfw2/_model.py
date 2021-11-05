@@ -6,8 +6,8 @@ https://github.com/yahoo/open_nsfw
 
 from typing import Optional, Tuple
 
-import tensorflow as tf
-from tensorflow.keras import layers
+import tensorflow as tf  # type: ignore
+from tensorflow.keras import layers  # type: ignore
 
 
 def _batch_norm(name: str) -> layers.BatchNormalization:
@@ -122,7 +122,7 @@ def _identity_block(
 
 def make_open_nsfw_model(
         input_shape: Tuple[int, int, int] = (224, 224, 3),
-        weights_path: Optional[str] = "../weights/open_nsfw_weights.h5"
+        weights_path: Optional[str] = "weights/open_nsfw_weights.h5"
 ) -> tf.keras.Model:
     image_input = layers.Input(shape=input_shape, name="input")
     x = image_input
