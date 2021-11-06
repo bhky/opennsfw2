@@ -59,7 +59,7 @@ non_nsfw_probability, nsfw_probability = predictions[0]
 ### `preprocess_image`
 Apply necessary preprocessing to the input image.
 - Parameters:
-  - `pil_image` (`PIL.Image`): Input image as a `PIL.Image` object.
+  - `pil_image` (`PIL.Image`): Input as a Pillow image.
   - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`): 
     See [preprocessing details](#preprocessing-details).
 - Return:
@@ -93,20 +93,18 @@ This implementation provides the following preprocessing options.
   and the later 
   [TensorFlow 1](https://github.com/mdietrichstein/tensorflow-open_nsfw/blob/master/image_utils.py#L4-L53) 
   implementations. The key steps are:
-  - Load input as a Pillow RGB image.
-  - Resize the image to `(256, 256)`.
-  - Save the image as JPEG bytes and reload again to an NumPy array 
+  - Resize the input Pillow image to `(256, 256)`.
+  - Save the image as JPEG bytes and reload again to an NumPy image 
     (this step is mysterious, but somehow it really makes a difference).
-  - Crop the centre part of the image with size `(224, 224)`.
-  - Convert the image channels from RGB to BGR.
+  - Crop the centre part of the NumPy image with size `(224, 224)`.
+  - Swap the colour channels to BGR.
   - Subtract the training dataset mean value of each channel: `[104, 117, 123]`.
 - `SIMPLE`: A simpler and probably more intuitive preprocessing option is also provided,
   but note that the model output probabilities will be different.
   The key steps are:
-  - Load input as a Pillow RGB image.
-  - Resize the image to `(224, 224)`.
-  - Convert the image to a NumPy array.
-  - Convert the image channels from RGB to BGR.
+  - Resize the input Pillow image to `(224, 224)`.
+  - Convert to a NumPy image.
+  - Swap the colour channels to BGR.
   - Subtract the training dataset mean value of each channel: `[104, 117, 123]`.
 
 ## Comparison
