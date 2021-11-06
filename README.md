@@ -3,9 +3,14 @@
 
 # Introduction
 
-The **Open-NSFW 2** project provides a TensorFlow 2 implementation of the popular 
-[Yahoo Open-NSFW model](https://github.com/yahoo/open_nsfw), with references
-to its previous third-party 
+Detecting Not-Suitable-For-Work (NSFW) images, in particular 
+pornographic images, is a high demand task in computer vision.
+The [Yahoo Open-NSFW model](https://github.com/yahoo/open_nsfw) originally
+developed with the Caffe framework has been a favourite choice, but the work 
+is now discontinued and Caffe is also becoming less popular.
+
+This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
+Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
 
 # Installation
@@ -34,12 +39,12 @@ image = n2.load_and_preprocess_image(image_path, n2.Preprocessing.YAHOO)
 # The preprocessed image is a NumPy array of shape (224, 224, 3).
 
 model = n2.make_open_nsfw_model()
-# By default, this call will download the pre-trained weights to:
+# By default, this call will search for the pre-trained weights file from path:
 # $HOME/.opennsfw2/weights/open_nsfw_weights.h5
-#
-# The model is an usual tf.keras.Model object.
+# If not exists, the file will be downloaded from this repository.
+# The model is a `tf.keras.Model` object.
 
-inputs = np.expand_dims(image, axis=0)  # Add batch axis.
+inputs = np.expand_dims(image, axis=0)  # Add batch axis (for single image).
 predictions = model.predict(inputs)
 # The shape of predictions is (batch_size, 2).
 # Each row gives [non_nsfw_probability, nsfw_probability] for each input image,
@@ -74,7 +79,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
     Users can provide another path if the default is not preferred. If `None`,
     no weights will be loaded to the model.
 - Return:
-  - `tf.keras.Model` instance.
+  - `tf.keras.Model` object.
 
 # Preprocessing details
 
@@ -116,8 +121,8 @@ The following figure shows the result:
 
 The current TensorFlow 2 implementation with `YAHOO` preprocessing
 can reproduce the well tested TensorFlow 1 probabilities very accurately.
-- 504 out of 521 images (~97%) have absolute difference < 0.05.
-- Only 3 images with absolute difference > 0.1.
+- 504 out of 521 images (~97%) have absolute differences < 0.05.
+- Only 3 images have absolute differences > 0.1.
 
 The discrepancies are probably due to floating point errors etc.
 
