@@ -54,7 +54,7 @@ Load image from given path and apply necessary preprocessing.
 - Parameters:
   - `image_path` (`str`): Path to input image.
   - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`): 
-    Preprocessing option, see the [preprocessing section](#preprocessing) for details.
+    See [preprocessing details](#preprocessing-details).
 - Return:
   - NumPy array of shape `(224, 224, 3)`.
 
@@ -76,13 +76,16 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
 - Return:
   - `tf.keras.Model` instance.
 
-# Preprocessing
+# Preprocessing details
 
 ## Options
 
 This implementation provides the following preprocessing options.
-- `YAHOO`: The default option which was used in the original Yahoo's Caffe and 
-  the later TensorFlow 1 implementations. The key steps are:
+- `YAHOO`: The default option which was used in the original 
+  [Yahoo's Caffe](https://github.com/yahoo/open_nsfw/blob/master/classify_nsfw.py#L19-L80) 
+  and the later 
+  [TensorFlow 1](https://github.com/mdietrichstein/tensorflow-open_nsfw/blob/master/image_utils.py#L4-L53) 
+  implementations. The key steps are:
   - Load input as a Pillow RGB image.
   - Resize the image to `(256, 256)`.
   - Save the image as JPEG bytes and reload again to an NumPy array 
@@ -108,10 +111,12 @@ three different settings are compared:
 - TensorFlow 2 implementation with `SIMPLE` preprocessing.
 
 The following figure shows the result:
+
 ![NSFW probabilities comparison](docs/nsfw_probabilities_comparison.png)
 
 The current TensorFlow 2 implementation with `YAHOO` preprocessing
 can reproduce the well tested TensorFlow 1 probabilities very accurately.
-- 504/521 images (~97%) have absolute difference < 0.05.
+- 504 out of 521 images (~97%) have absolute difference < 0.05.
 - Only 3 images with absolute difference > 0.1.
+
 The discrepancies are probably due to floating point errors etc.
