@@ -78,6 +78,8 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
 
 # Preprocessing
 
+## Options
+
 This implementation provides the following preprocessing options.
 - `YAHOO`: The default option which was used in the original Yahoo's Caffe and 
   the later TensorFlow 1 implementations. The key steps are:
@@ -96,3 +98,20 @@ This implementation provides the following preprocessing options.
   - Convert the image to a NumPy array.
   - Convert the image channels from RGB to BGR.
   - Subtract the training dataset mean value of each channel: `[104, 117, 123]`.
+
+## Comparison
+
+Using 521 private images, the NSFW probabilities given by 
+three different settings are compared:
+- [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw) with `YAHOO` preprocessing.
+- TensorFlow 2 implementation with `YAHOO` preprocessing.
+- TensorFlow 2 implementation with `SIMPLE` preprocessing.
+
+The following figure shows the result:
+![NSFW probabilities comparison](docs/nsfw_probabilities_comparison.png)
+
+The current TensorFlow 2 implementation with `YAHOO` preprocessing
+can reproduce the well tested TensorFlow 1 probabilities very accurately.
+- 504/521 images (~97%) have absolute difference < 0.05.
+- Only 3 images with absolute difference > 0.1.
+The discrepancies are probably due to floating point errors etc.
