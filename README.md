@@ -68,7 +68,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
 - Parameters:
   - `input_shape` (`Tuple[int, int, int]`, default `(224, 224, 3)`):
     Input shape of the model, this should not be changed.
-  - `weights_path` (`str`, default `$HOME/.opennsfw/weights/open_nsfw_weights.h5`): 
+  - `weights_path` (`Optional[str]`, default `$HOME/.opennsfw/weights/open_nsfw_weights.h5`): 
     Path to the weights in HDF5 format to be loaded by the model. 
     The weights file will be downloaded if not exists.
     Users can provide another path if the default is not preferred. If `None`,
