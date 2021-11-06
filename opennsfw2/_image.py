@@ -11,8 +11,8 @@ from PIL import Image  # type: ignore
 
 
 class Preprocessing(Enum):
-    SIMPLE = auto()
     YAHOO = auto()
+    SIMPLE = auto()
 
 
 def load_and_preprocess_image(

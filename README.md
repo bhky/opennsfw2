@@ -60,8 +60,8 @@ Load image from given path and apply necessary preprocessing.
 
 ### `Preprocessing`
 Enum class for preprocessing options.
-- `Preprocessing.SIMPLE`
 - `Preprocessing.YAHOO`
+- `Preprocessing.SIMPLE`
 
 ### `make_open_nsfw_model`
 Create an instance of the NSFW model, optionally with pre-trained weights from Yahoo.
