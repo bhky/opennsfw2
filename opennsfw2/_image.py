@@ -57,7 +57,7 @@ def load_and_preprocess_image(
     # RGB to BGR
     image = image[:, :, ::-1]
 
-    # Subtract the training dataset mean value in each channel.
+    # Subtract the training dataset mean value of each channel.
     vgg_mean = [104, 117, 123]
     image = image - np.array(vgg_mean, dtype=np.float32)
 
