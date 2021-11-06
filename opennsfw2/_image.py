@@ -40,11 +40,11 @@ def load_and_preprocess_image(
 
         image = skimage.io.imread(fh_im, as_gray=False).astype(np.float32)
 
-        H, W, _ = image.shape
+        height, width, _ = image.shape
         h, w = (224, 224)
 
-        h_off = max((H - h) // 2, 0)
-        w_off = max((W - w) // 2, 0)
+        h_off = max((height - h) // 2, 0)
+        w_off = max((width - w) // 2, 0)
         image = image[h_off:h_off + h, w_off:w_off + w, :]
 
     elif preprocessing == Preprocessing.SIMPLE:
