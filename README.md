@@ -31,7 +31,7 @@ import opennsfw2 as n2
 
 image_path = "path/to/your/image.jpg"
 image = n2.load_and_preprocess_image(image_path, n2.Preprocessing.YAHOO)
-# The loaded image is a NumPy array of shape (224, 224, 3).
+# The preprocessed image is a NumPy array of shape (224, 224, 3).
 
 model = n2.make_open_nsfw_model()
 # By default, this call will download the pre-trained weights to:
