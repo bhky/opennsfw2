@@ -120,3 +120,5 @@ can reproduce the well tested TensorFlow 1 probabilities very accurately.
 - Only 3 images with absolute difference > 0.1.
 
 The discrepancies are probably due to floating point errors etc.
+
+With `SIMPLE` preprocessing, the model tends to give lower probabilities.
