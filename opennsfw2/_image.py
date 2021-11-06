@@ -15,19 +15,16 @@ class Preprocessing(Enum):
     SIMPLE = auto()
 
 
-def load_and_preprocess_image(
-        image_path: str,
+def preprocess_image(
+        pil_image: Image,
         preprocessing: Preprocessing = Preprocessing.YAHOO
 ) -> np.ndarray:
     """
-    Load image from image_path with preprocessing for the
-    pre-trained Open NSFW model weights.
+    Preprocessing for the pre-trained Open NSFW model weights.
 
     References:
     https://github.com/mdietrichstein/tensorflow-open_nsfw
     """
-    pil_image = Image.open(image_path)
-
     if pil_image.mode != "RGB":
         pil_image = pil_image.convert("RGB")
 

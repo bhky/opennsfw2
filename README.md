@@ -33,9 +33,11 @@ python3 -m pip install .
 ```python
 import numpy as np
 import opennsfw2 as n2
+from PIL import Image
 
 image_path = "path/to/your/image.jpg"
-image = n2.load_and_preprocess_image(image_path, n2.Preprocessing.YAHOO)
+pil_image = Image.open(image_path)
+image = n2.preprocess_image(pil_image, n2.Preprocessing.YAHOO)
 # The preprocessed image is a NumPy array of shape (224, 224, 3).
 
 model = n2.make_open_nsfw_model()
@@ -54,10 +56,10 @@ non_nsfw_probability, nsfw_probability = predictions[0]
 
 # API
 
-### `load_and_preprocess_image`
-Load image from given path and apply necessary preprocessing.
+### `preprocess_image`
+Apply necessary preprocessing to the input image.
 - Parameters:
-  - `image_path` (`str`): Path to input image.
+  - `pil_image` (`PIL.Image`): Input image as a `PIL.Image` object.
   - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`): 
     See [preprocessing details](#preprocessing-details).
 - Return:
