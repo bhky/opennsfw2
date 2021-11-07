@@ -15,6 +15,7 @@ MODEL = n2.make_open_nsfw_model()
 PIL_IMAGES = [
     Image.open(os.path.join(BASE_DIR, "test_image_1.jpg")),
     Image.open(os.path.join(BASE_DIR, "test_image_2.jpg")),
+    Image.open(os.path.join(BASE_DIR, "test_image_3.jpg")),
 ]
 
 
@@ -24,7 +25,7 @@ class TestModel(unittest.TestCase):
         images = np.array([
             n2.preprocess_image(i, n2.Preprocessing.YAHOO) for i in PIL_IMAGES
         ])
-        expected_scores = [0.012, 0.756]
+        expected_scores = [0.012, 0.756, 0.067]
 
         predictions = MODEL.predict(images)
         for expected_score, prediction in zip(expected_scores, predictions):
@@ -35,7 +36,7 @@ class TestModel(unittest.TestCase):
         images = np.array([
             n2.preprocess_image(i, n2.Preprocessing.SIMPLE) for i in PIL_IMAGES
         ])
-        expected_scores = [0.001, 0.597]
+        expected_scores = [0.001, 0.597, 0.003]
 
         predictions = MODEL.predict(images)
         for expected_score, prediction in zip(expected_scores, predictions):
