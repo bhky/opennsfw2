@@ -120,10 +120,8 @@ The following figure shows the result:
 ![NSFW probabilities comparison](docs/nsfw_probabilities_comparison.png)
 
 The current TensorFlow 2 implementation with `YAHOO` preprocessing
-can reproduce the well tested TensorFlow 1 probabilities very accurately.
-- 504 out of 521 images (~97%) have absolute differences < 0.05.
-- Only 3 images have absolute differences > 0.1.
+can totally reproduce the well-tested TensorFlow 1 result, 
+with small floating point errors only.
 
-The discrepancies are probably due to floating point errors etc.
-
-With `SIMPLE` preprocessing, the model tends to give lower probabilities.
+With `SIMPLE` preprocessing the results are different, where the model tends 
+to give lower probabilities.
