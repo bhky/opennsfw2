@@ -2,7 +2,7 @@
 Inference utilities.
 """
 
-from typing import List, Optional
+from typing import Optional, Sequence
 
 import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
@@ -12,7 +12,7 @@ from ._model import get_default_weights_path, make_open_nsfw_model
 
 
 def predict(
-        image_paths: List[str],
+        image_paths: Sequence[str],
         batch_size: int = 32,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path()
