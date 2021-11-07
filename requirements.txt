@@ -1,5 +1,5 @@
 gdown>=4.2.0
-numpy>=1.14.0
+numpy>=1.14.5
 Pillow>=8.0.0
 scikit-image>=0.18.3
 tensorflow>=2.0.0
