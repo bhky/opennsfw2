@@ -53,11 +53,10 @@ inputs = np.expand_dims(image, axis=0)  # Add batch axis (for single image).
 predictions = model.predict(inputs)
 
 # The shape of predictions is (batch_size, 2).
-# Each row gives [non_nsfw_probability, nsfw_probability] for each input image,
-# e.g.:
+# Each row gives [non_nsfw_probability, nsfw_probability] of an input image, e.g.:
 non_nsfw_probability, nsfw_probability = predictions[0]
 ```
-Alternatively, an end-to-end pipeline function can be used:
+Alternatively, the end-to-end pipeline function can be used:
 ```python
 import opennsfw2 as n2
 
@@ -108,6 +107,9 @@ End-to-end pipeline function from input image paths to predictions.
   - `batch_size` (`int`, default `32`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+- Return:
+  - NumPy array of shape `(batch_size, 2)`, each row gives     
+    `[non_nsfw_probability, nsfw_probability]` of an input image.
 
 # Preprocessing details
 
