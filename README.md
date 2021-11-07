@@ -15,7 +15,7 @@ Yahoo model, with references to its previous third-party
 
 # Installation
 
-Python 3 is required.
+Python 3.6 or above is required.
 
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
@@ -35,19 +35,23 @@ import numpy as np
 import opennsfw2 as n2
 from PIL import Image
 
+# Load and preprocess image.
 image_path = "path/to/your/image.jpg"
 pil_image = Image.open(image_path)
 image = n2.preprocess_image(pil_image, n2.Preprocessing.YAHOO)
 # The preprocessed image is a NumPy array of shape (224, 224, 3).
 
-model = n2.make_open_nsfw_model()
+# Create the model.
 # By default, this call will search for the pre-trained weights file from path:
 # $HOME/.opennsfw2/weights/open_nsfw_weights.h5
 # If not exists, the file will be downloaded from this repository.
 # The model is a `tf.keras.Model` object.
+model = n2.make_open_nsfw_model()
 
+# Make predictions.
 inputs = np.expand_dims(image, axis=0)  # Add batch axis (for single image).
 predictions = model.predict(inputs)
+
 # The shape of predictions is (batch_size, 2).
 # Each row gives [non_nsfw_probability, nsfw_probability] for each input image,
 # e.g.:
@@ -78,8 +82,8 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
   - `weights_path` (`Optional[str]`, default `$HOME/.opennsfw/weights/open_nsfw_weights.h5`): 
     Path to the weights in HDF5 format to be loaded by the model. 
     The weights file will be downloaded if not exists.
-    Users can provide another path if the default is not preferred. If `None`,
-    no weights will be loaded to the model.
+    Users can provide path if the default is not preferred. 
+    If `None`, no weights will be downloaded nor loaded to the model.
 - Return:
   - `tf.keras.Model` object.
 
