@@ -2,10 +2,10 @@
 Download utilities.
 """
 
-import os
-from pathlib import Path
-
 import gdown  # type: ignore
+import os
+
+from pathlib import Path
 
 WEIGHTS_FILE = "open_nsfw_weights.h5"
 WEIGHTS_URL = f"https://github.com/bhky/opennsfw2/releases/download/v0.1.0/{WEIGHTS_FILE}"
