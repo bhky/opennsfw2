@@ -15,7 +15,7 @@ Yahoo model, with references to its previous third-party
 
 # Installation
 
-Python 3.6 or above is required.
+Python 3.7 or above is required. Tested for 3.7, 3.8, and 3.9.
 
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
