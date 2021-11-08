@@ -3,6 +3,7 @@ __pycache__
 .mypy_cache
 venv/
 *.zip
+build/
 data/
 tmp/
 scripts/
