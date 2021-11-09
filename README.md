@@ -13,6 +13,10 @@ This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
 
+Please see the description in the Yahoo project page (linked above) for
+the definition of NSFW in this context, and the model training details.
+
+
 # Installation
 
 Python 3.7 or above is required. Tested for 3.7, 3.8, and 3.9.
