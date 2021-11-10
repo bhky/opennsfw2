@@ -3,8 +3,10 @@
 
 # Introduction
 
-Detecting Not-Suitable-For-Work (NSFW) images, in particular 
-pornographic images, is a high demand task in computer vision.
+Detecting Not-Suitable-For-Work (NSFW) images is a high demand task in 
+computer vision. While there are many types of NSFW images, here we focus on
+the pornographic images.
+
 The [Yahoo Open-NSFW model](https://github.com/yahoo/open_nsfw) originally
 developed with the Caffe framework has been a favourite choice, but the work 
 is now discontinued and Caffe is also becoming less popular.
@@ -13,8 +15,8 @@ This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
 
-Please see the description in the Yahoo project page (linked above) for
-the definition of NSFW in this context, and the model training details.
+Please see the description on the Yahoo project page (linked above) for
+the context, definitions, and model training details.
 
 
 # Installation
@@ -57,8 +59,8 @@ inputs = np.expand_dims(image, axis=0)  # Add batch axis (for single image).
 predictions = model.predict(inputs)
 
 # The shape of predictions is (batch_size, 2).
-# Each row gives [non_nsfw_probability, nsfw_probability] of an input image, e.g.:
-non_nsfw_probability, nsfw_probability = predictions[0]
+# Each row gives [sfw_probability, nsfw_probability] of an input image, e.g.:
+sfw_probability, nsfw_probability = predictions[0]
 ```
 Alternatively, the end-to-end pipeline function can be used:
 ```python
@@ -113,7 +115,7 @@ End-to-end pipeline function from input image paths to predictions.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
   - NumPy array of shape `(batch_size, 2)`, each row gives     
-    `[non_nsfw_probability, nsfw_probability]` of an input image.
+    `[sfw_probability, nsfw_probability]` of an input image.
 
 # Preprocessing details
 
