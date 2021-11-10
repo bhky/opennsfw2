@@ -112,7 +112,7 @@ End-to-end pipeline function from input image paths to predictions.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
-  - NumPy array of shape `(batch_size, 2)`, each row gives     
+  - NumPy array of shape `(batch_size, 2)`, each row gives 
     `[sfw_probability, nsfw_probability]` of an input image.
 
 # Preprocessing details
