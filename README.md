@@ -10,14 +10,12 @@ the pornographic images.
 The [Yahoo Open-NSFW model](https://github.com/yahoo/open_nsfw) originally
 developed with the Caffe framework has been a favourite choice, but the work 
 is now discontinued and Caffe is also becoming less popular.
+Please see the description on the Yahoo project page for
+the context, definitions, and model training details.
 
 This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
-
-Please see the description on the Yahoo project page (linked above) for
-the context, definitions, and model training details.
-
 
 # Installation
 
