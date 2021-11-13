@@ -80,9 +80,11 @@ Prediction on each frame of a video file is also supported:
 ```python
 import opennsfw2 as n2
 
+# The video can be in any file format supported by OpenCV.
+video_path = "path/to/your/video.mp4"
+
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-  "path/to/your/video.mp4",  # Any video format supported by OpenCV.
-  frame_interval=8
+  video_path, frame_interval=8  # See the API section for details.
 )
 ```
 
@@ -116,9 +118,10 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
   - `tf.keras.Model` object.
 
 ### `predict_images`
-End-to-end pipeline function from input image files to predictions.
+End-to-end pipeline function from the input image files to predictions.
 - Parameters:
-  - `image_paths` (`Sequence[str]`): List of paths to input image files.
+  - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
+    The file format must be supported by Pillow.
   - `batch_size` (`int`, default `32`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
@@ -127,26 +130,28 @@ End-to-end pipeline function from input image files to predictions.
     `[sfw_probability, nsfw_probability]` of an input image.
 
 ### `predict_video_frames`
-End-to-end pipeline function from input video file to predictions.
+End-to-end pipeline function from the input video file to predictions.
 - Parameters:
-  - `video_path` (`str`): Path to input video file.
+  - `video_path` (`str`): Path to the input video file. 
+    The file format must be supported by OpenCV.
   - `frame_interval` (`int`, default `8`): Prediction will be done on every this 
     number of frames, starting from frame 1, i.e., if this is 8, then 
     prediction will only be done on frame 1, 9, 17, etc.
-  - `output_video_path` (`Optional[str]`, default `None`): If not `None`,
-    an output video in AVI format, with the same frame size and frame rate as
-    the input video, will be saved. The predicted NSFW probability is printed
-    in the top-left corner of each frame. Be aware that the output 
+  - `output_video_path` (`Optional[str]`, default `None`): 
+    If not `None`, e.g., `out.mjpeg`,
+    an output video in MJPEG format, with the same frame size and frame rate as
+    the input video, will be saved via OpenCV. The predicted NSFW probability 
+    is printed on the top-left corner of each frame. Be aware that the output 
     file size could be much larger than the input file size.
     This output video is for reference only.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
   - Tuple of NumPy arrays, each with length equals to the number of video frames.
-    - `elapsed_seconds`: Elapsed time in seconds of each frame.
+    - `elapsed_seconds`: Video elapsed time in seconds at each frame.
     - `nsfw_probabilities`: NSFW probability of each frame. 
       Note that for any `frame_interval > 1`, all the frames without a prediction 
-      will be assumed the NSFW probability of the previous prediction.
+      will be assumed to have the NSFW probability from the previous prediction.
 
 # Preprocessing details
 
