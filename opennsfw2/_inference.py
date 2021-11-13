@@ -36,7 +36,7 @@ def predict_video_frames(
         output_video_path: Optional[str] = None,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path()
-) -> Tuple[List[float], List[float]]:
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Make prediction for each video frame.
     """
@@ -92,5 +92,5 @@ def predict_video_frames(
     cap.release()
     cv2.destroyAllWindows()
 
-    seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps).tolist()
-    return seconds, nsfw_probabilities
+    elapsed_seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps)
+    return elapsed_seconds, np.array(nsfw_probabilities)
