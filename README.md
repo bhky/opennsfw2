@@ -3,9 +3,9 @@
 
 # Introduction
 
-Detecting Not-Suitable-For-Work (NSFW) images is a high demand task in 
-computer vision. While there are many types of NSFW images, here we focus on
-the pornographic images.
+Detecting Not-Suitable-For-Work (NSFW) content is a high demand task in 
+computer vision. While there are many types of NSFW content, here we focus on
+the pornographic images and videos.
 
 The [Yahoo Open-NSFW model](https://github.com/yahoo/open_nsfw) originally
 developed with the Caffe framework has been a favourite choice, but the work 
@@ -16,6 +16,8 @@ the context, definitions, and model training details.
 This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
+
+A simple API is provided for making predictions on images and videos.
 
 # Installation
 
@@ -60,8 +62,7 @@ predictions = model.predict(inputs)
 # Each row gives [sfw_probability, nsfw_probability] of an input image, e.g.:
 sfw_probability, nsfw_probability = predictions[0]
 ```
-Alternatively, the end-to-end pipeline function can be used:
-
+Alternatively, the end-to-end pipeline function for image files can be used:
 ```python
 import opennsfw2 as n2
 
@@ -73,6 +74,15 @@ image_paths = [
 
 predictions = n2.predict_images(
   image_paths, batch_size=4, preprocessing=n2.Preprocessing.YAHOO
+)
+```
+Prediction on each frame of a video file is also supported:
+```python
+import opennsfw2 as n2
+
+elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
+  "path/to/your/video.mp4",  # Any video format supported by OpenCV.
+  frame_interval=8
 )
 ```
 
@@ -106,7 +116,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
   - `tf.keras.Model` object.
 
 ### `predict_images`
-End-to-end pipeline function from input image paths to predictions.
+End-to-end pipeline function from input image files to predictions.
 - Parameters:
   - `image_paths` (`Sequence[str]`): List of paths to input image files.
   - `batch_size` (`int`, default `32`): Batch size to be used for model inference.
@@ -115,6 +125,28 @@ End-to-end pipeline function from input image paths to predictions.
 - Return:
   - NumPy array of shape `(batch_size, 2)`, each row gives 
     `[sfw_probability, nsfw_probability]` of an input image.
+
+### `predict_video_frames`
+End-to-end pipeline function from input video file to predictions.
+- Parameters:
+  - `video_path` (`str`): Path to input video file.
+  - `frame_interval` (`int`, default `8`): Prediction will be done on every this 
+    number of frames, starting from frame 1, i.e., if this is 8, then 
+    prediction will only be done on frame 1, 9, 17, etc.
+  - `output_video_path` (`Optional[str]`, default `None`): If not `None`,
+    an output video in AVI format, with the same frame size and frame rate as
+    the input video, will be saved. The predicted NSFW probability is printed
+    in the top-left corner of each frame. Be aware that the output 
+    file size could be much larger than the input file size.
+    This output video is for reference only.
+  - `preprocessing`: Same as that in `preprocess_image`.
+  - `weights_path`: Same as that in `make_open_nsfw_model`.
+- Return:
+  - Tuple of NumPy arrays, each with length equals to the number of video frames.
+    - `elapsed_seconds`: Elapsed time in seconds of each frame.
+    - `nsfw_probabilities`: NSFW probability of each frame. 
+      Note that for any `frame_interval > 1`, all the frames without a prediction 
+      will be assumed the NSFW probability of the previous prediction.
 
 # Preprocessing details
 
@@ -142,7 +174,7 @@ This implementation provides the following preprocessing options.
 
 ## Comparison
 
-Using 521 private images, the NSFW probabilities given by 
+Using 521 private test images, the NSFW probabilities given by 
 three different settings are compared:
 - [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw) with `YAHOO` preprocessing.
 - TensorFlow 2 implementation with `YAHOO` preprocessing.
@@ -156,5 +188,9 @@ The current TensorFlow 2 implementation with `YAHOO` preprocessing
 can totally reproduce the well-tested TensorFlow 1 result, 
 with small floating point errors only.
 
-With `SIMPLE` preprocessing the results are different, where the model tends 
-to give lower probabilities.
+With `SIMPLE` preprocessing the result is different, where the model tends 
+to give lower probabilities over the current test images.
+
+Note that this comparison does not conclude which preprocessing method is 
+"better", it only shows their discrepancies. However, users that prefer the
+original Yahoo result should go for the default `YAHOO` preprocessing.
