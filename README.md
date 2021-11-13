@@ -61,17 +61,18 @@ predictions = model.predict(inputs)
 sfw_probability, nsfw_probability = predictions[0]
 ```
 Alternatively, the end-to-end pipeline function can be used:
+
 ```python
 import opennsfw2 as n2
 
 image_paths = [
-    "path/to/your/image1.jpg",
-    "path/to/your/image2.jpg",
-    # ...
+  "path/to/your/image1.jpg",
+  "path/to/your/image2.jpg",
+  # ...
 ]
 
-predictions = n2.predict(
-    image_paths, batch_size=4, preprocessing=n2.Preprocessing.YAHOO
+predictions = n2.predict_images(
+  image_paths, batch_size=4, preprocessing=n2.Preprocessing.YAHOO
 )
 ```
 
@@ -104,7 +105,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
 - Return:
   - `tf.keras.Model` object.
 
-### `predict`
+### `predict_images`
 End-to-end pipeline function from input image paths to predictions.
 - Parameters:
   - `image_paths` (`Sequence[str]`): List of paths to input image files.

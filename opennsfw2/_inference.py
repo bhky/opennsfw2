@@ -13,7 +13,7 @@ from ._image import preprocess_image, Preprocessing
 from ._model import get_default_weights_path, make_open_nsfw_model
 
 
-def predict(
+def predict_images(
         image_paths: Sequence[str],
         batch_size: int = 32,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
