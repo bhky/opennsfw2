@@ -72,11 +72,11 @@ def predict_video_frames(
             pil_frame = Image.fromarray(frame)
             input_frame = preprocess_image(pil_frame, preprocessing)
             predictions = model.predict(np.expand_dims(input_frame, axis=0), 1)
-            nsfw_probability = predictions[0][1]
+            nsfw_probability = np.round(predictions[0][1], 2)
 
         nsfw_probabilities.append(nsfw_probability)
 
-        result_text = f"NSFW probability: {str(np.round(nsfw_probability, 2))}"
+        result_text = f"NSFW probability: {str(nsfw_probability)}"
         # RGB colour.
         colour = (255, 0, 0) if nsfw_probability >= 0.8 else (0, 0, 255)
         cv2.putText(  # pylint: disable=no-member
