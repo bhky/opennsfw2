@@ -45,13 +45,13 @@ def predict_video_frames(
 
     model = make_open_nsfw_model(weights_path=weights_path)
 
-    video_writer: Optional[cv2.VideoWriter] = None
+    video_writer: Optional[cv2.VideoWriter] = None  # pylint: disable=no-member
     nsfw_probability = 0.0
     nsfw_probabilities: List[float] = []
     frame_count = 0
 
-    cap = cv2.VideoCapture(video_path)
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
+    fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     while cap.isOpened():
         ret, frame = cap.read()  # Get next video frame.
@@ -59,12 +59,12 @@ def predict_video_frames(
             break  # End of given video.
 
         frame_count += 1
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
 
         if video_writer is None and output_video_path is not None:
-            video_writer = cv2.VideoWriter(
+            video_writer = cv2.VideoWriter(  # pylint: disable=no-member
                 output_video_path,
-                cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+                cv2.VideoWriter_fourcc("M", "J", "P", "G"),  # pylint: disable=no-member
                 fps, (frame.shape[1], frame.shape[0])
             )
 
@@ -79,20 +79,20 @@ def predict_video_frames(
         result_text = f"NSFW probability: {str(np.round(nsfw_probability, 2))}"
         # BGR colour.
         colour = (0, 0, 255) if nsfw_probability >= 0.8 else (255, 0, 0)
-        cv2.putText(
+        cv2.putText(  # pylint: disable=no-member
             frame, result_text, (10, 30),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1, colour, 2, cv2.LINE_AA
+            cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
+            1, colour, 2, cv2.LINE_AA  # pylint: disable=no-member
         )
 
         if video_writer is not None:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
             video_writer.write(frame)
 
     if video_writer is not None:
         video_writer.release()
     cap.release()
-    cv2.destroyAllWindows()
+    cv2.destroyAllWindows()  # pylint: disable=no-member
 
     elapsed_seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps)
     return elapsed_seconds, np.array(nsfw_probabilities)
