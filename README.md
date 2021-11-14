@@ -36,6 +36,39 @@ python3 -m pip install .
 
 # Usage
 
+Quick examples for getting started are given below.
+For more details, please refer to the [API section](#api).
+
+For images:
+```python
+import opennsfw2 as n2
+
+# To get the NSFW probability of a single image.
+image_path = "path/to/your/image.jpg"
+
+nsfw_probability = n2.predict_image(image_path)
+
+# To get the NSFW probabilities of a list of images.
+# This is better than looping with `predict_image` as here batching is used for the model.
+image_paths = [
+  "path/to/your/image1.jpg",
+  "path/to/your/image2.jpg",
+  # ...
+]
+
+nsfw_probabilities = n2.predict_images(image_paths)
+```
+For video:
+```python
+import opennsfw2 as n2
+
+# The video can be in any file format supported by OpenCV.
+video_path = "path/to/your/video.mp4"
+
+# Return two lists giving the elapsed time in seconds and the NSFW probability of each frame.
+elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
+```
+For users familiar with NumPy and TensorFlow / Keras:
 ```python
 import numpy as np
 import opennsfw2 as n2
@@ -58,36 +91,9 @@ model = n2.make_open_nsfw_model()
 inputs = np.expand_dims(image, axis=0)  # Add batch axis (for single image).
 predictions = model.predict(inputs)
 
-# The shape of predictions is (batch_size, 2).
+# The shape of predictions is (num_images, 2).
 # Each row gives [sfw_probability, nsfw_probability] of an input image, e.g.:
 sfw_probability, nsfw_probability = predictions[0]
-```
-Alternatively, the end-to-end pipeline function for image files can be used:
-```python
-import opennsfw2 as n2
-
-image_paths = [
-  "path/to/your/image1.jpg",
-  "path/to/your/image2.jpg",
-  # ...
-]
-
-predictions = n2.predict_images(
-  image_paths, batch_size=4, preprocessing=n2.Preprocessing.YAHOO
-)
-```
-Prediction on each frame of a video file is also supported:
-```python
-import opennsfw2 as n2
-
-# The video can be in any file format supported by OpenCV.
-video_path = "path/to/your/video.mp4"
-
-# Return two NumPy arrays giving the elapsed time in seconds and the NSFW probability
-# of each frame. See the API section for details.
-elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-  video_path, frame_interval=8, preprocessing=n2.Preprocessing.YAHOO
-)
 ```
 
 # API
@@ -117,21 +123,30 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
     If `None`, no weights will be downloaded nor loaded to the model.
     Users can provide path if the default is not preferred. 
     The environment variable `OPENNSFW2_HOME` can also be used to indicate
-    where the `.opennsfw2` directory should be located/created.
+    where the `.opennsfw2` directory should be located.
 - Return:
   - `tf.keras.Model` object.
 
-### `predict_images`
-End-to-end pipeline function from the input image files to predictions.
+### `predict_image`
+End-to-end pipeline function from the input image file to the predicted NSFW probability.
 - Parameters:
-  - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
+  - `image_path` (`str`): Path to the input image file. 
     The file format must be supported by Pillow.
-  - `batch_size` (`int`, default `32`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
-  - NumPy array of shape `(batch_size, 2)`, each row gives 
-    `[sfw_probability, nsfw_probability]` of an input image.
+  - `nsfw_probability` (`float`): The predicted NSFW probability of the image.
+
+### `predict_images`
+End-to-end pipeline function from the input image files to the predicted NSFW probabilities.
+- Parameters:
+  - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
+    The file format must be supported by Pillow.
+  - `batch_size` (`int`, default `16`): Batch size to be used for model inference.
+  - `preprocessing`: Same as that in `preprocess_image`.
+  - `weights_path`: Same as that in `make_open_nsfw_model`.
+- Return:
+  - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
 
 ### `predict_video_frames`
 End-to-end pipeline function from the input video file to predictions.
@@ -151,10 +166,10 @@ End-to-end pipeline function from the input video file to predictions.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
-  - Tuple of NumPy arrays, each with length equals to the number of video frames.
+  - Tuple of `List[float]`, each with length equals to the number of video frames.
     - `elapsed_seconds`: Video elapsed time in seconds at each frame.
     - `nsfw_probabilities`: NSFW probability of each frame. 
-      Note that for any `frame_interval > 1`, all frames without a prediction 
+      For any `frame_interval > 1`, all frames without a prediction 
       will be assumed to have the NSFW probability of the previous predicted frame.
 
 # Preprocessing details
