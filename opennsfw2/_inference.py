@@ -15,19 +15,35 @@ from ._model import get_default_weights_path, make_open_nsfw_model
 
 def predict_images(
         image_paths: Sequence[str],
-        batch_size: int = 32,
+        batch_size: int = 16,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path()
-) -> np.ndarray:
+) -> List[float]:
     """
-    Pipeline from image paths to predictions.
+    Pipeline from image paths to predicted NSFW probabilities.
     """
     images = np.array([
         preprocess_image(Image.open(image_path), preprocessing)
         for image_path in image_paths
     ])
     model = make_open_nsfw_model(weights_path=weights_path)
-    return model.predict(images, batch_size=batch_size)
+    return model.predict(images, batch_size=batch_size)[:, 1].tolist()
+
+
+def predict_image(
+        image_path: str,
+        preprocessing: Preprocessing = Preprocessing.YAHOO,
+        weights_path: Optional[str] = get_default_weights_path()
+) -> float:
+    """
+    Pipeline from single image path to predicted NSFW probability.
+    """
+    return predict_images(
+        [image_path],
+        batch_size=1,
+        preprocessing=preprocessing,
+        weights_path=weights_path
+    )[0]
 
 
 def predict_video_frames(
@@ -36,7 +52,7 @@ def predict_video_frames(
         output_video_path: Optional[str] = None,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path()
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> Tuple[List[float], List[float]]:
     """
     Make prediction for each video frame.
     """
@@ -94,5 +110,5 @@ def predict_video_frames(
     cap.release()
     cv2.destroyAllWindows()  # pylint: disable=no-member
 
-    elapsed_seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps)
-    return elapsed_seconds, np.array(nsfw_probabilities)
+    elapsed_seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps).tolist()
+    return elapsed_seconds, nsfw_probabilities
