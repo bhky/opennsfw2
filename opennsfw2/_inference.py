@@ -77,10 +77,12 @@ def predict_video_frames(
         nsfw_probabilities.append(nsfw_probability)
 
         result_text = f"NSFW probability: {str(np.round(nsfw_probability, 2))}"
+        # BGR colour.
+        colour = (0, 0, 255) if nsfw_probability >= 0.8 else (255, 0, 0)
         cv2.putText(
             frame, result_text, (10, 30),
             cv2.FONT_HERSHEY_SIMPLEX,
-            1, (0, 0, 255), 2, cv2.LINE_AA
+            1, colour, 2, cv2.LINE_AA
         )
 
         if video_writer is not None:
