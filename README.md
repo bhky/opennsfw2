@@ -83,8 +83,10 @@ import opennsfw2 as n2
 # The video can be in any file format supported by OpenCV.
 video_path = "path/to/your/video.mp4"
 
+# Return two NumPy arrays giving the elapsed time in seconds and the NSFW probability
+# of each frame. See the API section for details.
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-  video_path, frame_interval=8  # See the API section for details.
+  video_path, frame_interval=8
 )
 ```
 
@@ -150,8 +152,8 @@ End-to-end pipeline function from the input video file to predictions.
   - Tuple of NumPy arrays, each with length equals to the number of video frames.
     - `elapsed_seconds`: Video elapsed time in seconds at each frame.
     - `nsfw_probabilities`: NSFW probability of each frame. 
-      Note that for any `frame_interval > 1`, all the frames without a prediction 
-      will be assumed to have the NSFW probability from the previous prediction.
+      Note that for any `frame_interval > 1`, all frames without a prediction 
+      will be assumed to have the NSFW probability of the previous predicted frame.
 
 # Preprocessing details
 
