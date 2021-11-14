@@ -62,7 +62,7 @@ For video:
 ```python
 import opennsfw2 as n2
 
-# The video can be in any file format supported by OpenCV.
+# The video can be in any format supported by OpenCV.
 video_path = "path/to/your/video.mp4"
 
 # Return two lists giving the elapsed time in seconds and the NSFW probability of each frame.
@@ -128,20 +128,20 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
   - `tf.keras.Model` object.
 
 ### `predict_image`
-End-to-end pipeline function from the input image file to the predicted NSFW probability.
+End-to-end pipeline function from the input image to the predicted NSFW probability.
 - Parameters:
   - `image_path` (`str`): Path to the input image file. 
-    The file format must be supported by Pillow.
+    The image format must be supported by Pillow.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
 - Return:
   - `nsfw_probability` (`float`): The predicted NSFW probability of the image.
 
 ### `predict_images`
-End-to-end pipeline function from the input image files to the predicted NSFW probabilities.
+End-to-end pipeline function from the input images to the predicted NSFW probabilities.
 - Parameters:
   - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
-    The file format must be supported by Pillow.
+    The image format must be supported by Pillow.
   - `batch_size` (`int`, default `16`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
@@ -149,10 +149,10 @@ End-to-end pipeline function from the input image files to the predicted NSFW pr
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
 
 ### `predict_video_frames`
-End-to-end pipeline function from the input video file to predictions.
+End-to-end pipeline function from the input video to predictions.
 - Parameters:
-  - `video_path` (`str`): Path to the input video file. 
-    The file format must be supported by OpenCV.
+  - `video_path` (`str`): Path to the input video source. 
+    The video format must be supported by OpenCV.
   - `frame_interval` (`int`, default `8`): Prediction will be done on every this 
     number of frames, starting from frame 1, i.e., if this is 8, then 
     prediction will only be done on frame 1, 9, 17, etc.

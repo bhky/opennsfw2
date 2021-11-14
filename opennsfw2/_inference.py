@@ -2,7 +2,6 @@
 Inference utilities.
 """
 
-import os
 from typing import List, Optional, Sequence, Tuple
 
 import cv2  # type: ignore
@@ -58,8 +57,8 @@ def predict_video_frames(
     """
     Make prediction for each video frame.
     """
-    if not os.path.isfile(video_path):
-        raise FileNotFoundError(f"Video file not found: {video_path}")
+    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
+    fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     model = make_open_nsfw_model(weights_path=weights_path)
 
@@ -67,9 +66,6 @@ def predict_video_frames(
     nsfw_probability = 0.0
     nsfw_probabilities: List[float] = []
     frame_count = 0
-
-    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
-    fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     while cap.isOpened():
         ret, bgr_frame = cap.read()  # Get next video frame.
