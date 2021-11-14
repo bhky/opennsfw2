@@ -16,6 +16,7 @@ IMAGE_PATHS = [
     os.path.join(BASE_DIR, "test_image_2.jpg"),
     os.path.join(BASE_DIR, "test_image_3.jpg"),
 ]
+VIDEO_PATH = os.path.join(BASE_DIR, "test_video.mp4")
 
 
 class TestModel(unittest.TestCase):
@@ -37,3 +38,10 @@ class TestModel(unittest.TestCase):
             IMAGE_PATHS, preprocessing=n2.Preprocessing.SIMPLE
         )[:, 1]
         self._assert(expected_scores, predicted_scores)
+
+    def test_predict_video_frames(self) -> None:
+        elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
+            VIDEO_PATH, frame_interval=10
+        )
+        self.assertGreater(len(elapsed_seconds), 0)
+        self.assertEqual(len(elapsed_seconds), len(nsfw_probabilities))
