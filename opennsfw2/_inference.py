@@ -77,8 +77,8 @@ def predict_video_frames(
         nsfw_probabilities.append(nsfw_probability)
 
         result_text = f"NSFW probability: {str(np.round(nsfw_probability, 2))}"
-        # BGR colour.
-        colour = (0, 0, 255) if nsfw_probability >= 0.8 else (255, 0, 0)
+        # RGB colour.
+        colour = (255, 0, 0) if nsfw_probability >= 0.8 else (0, 0, 255)
         cv2.putText(  # pylint: disable=no-member
             frame, result_text, (10, 30),
             cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
