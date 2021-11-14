@@ -142,9 +142,9 @@ End-to-end pipeline function from the input video file to predictions.
     number of frames, starting from frame 1, i.e., if this is 8, then 
     prediction will only be done on frame 1, 9, 17, etc.
   - `output_video_path` (`Optional[str]`, default `None`): 
-    If not `None`, e.g., `out.mjpeg`,
-    an output video in MJPEG format, with the same frame size and frame rate as
-    the input video, will be saved via OpenCV. The predicted NSFW probability 
+    If not `None`, e.g., `out.avi`,
+    an output MJPEG video with the same frame size and frame rate as
+    the input video will be saved via OpenCV. The predicted NSFW probability 
     is printed on the top-left corner of each frame. Be aware that the output 
     file size could be much larger than the input file size.
     This output video is for reference only.
