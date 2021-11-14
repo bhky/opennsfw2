@@ -54,12 +54,12 @@ def predict_video_frames(
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     while cap.isOpened():
-        ret, frame = cap.read()  # Get next video frame.
+        ret, bgr_frame = cap.read()  # Get next video frame.
         if not ret:
             break  # End of given video.
 
         frame_count += 1
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
+        frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
 
         if video_writer is None and output_video_path is not None:
             video_writer = cv2.VideoWriter(  # pylint: disable=no-member
@@ -86,8 +86,9 @@ def predict_video_frames(
         )
 
         if video_writer is not None:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
-            video_writer.write(frame)
+            video_writer.write(
+                cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
+            )
 
     if video_writer is not None:
         video_writer.release()
