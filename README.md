@@ -49,7 +49,7 @@ image_path = "path/to/your/image.jpg"
 nsfw_probability = n2.predict_image(image_path)
 
 # To get the NSFW probabilities of a list of images.
-# This is better than looping with `predict_image` as here batching is used for the model.
+# This is better than looping with `predict_image` as batching is used here for the model.
 image_paths = [
   "path/to/your/image1.jpg",
   "path/to/your/image2.jpg",
