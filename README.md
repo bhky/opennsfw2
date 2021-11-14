@@ -86,7 +86,7 @@ video_path = "path/to/your/video.mp4"
 # Return two NumPy arrays giving the elapsed time in seconds and the NSFW probability
 # of each frame. See the API section for details.
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-  video_path, frame_interval=8
+  video_path, frame_interval=8, preprocessing=n2.Preprocessing.YAHOO
 )
 ```
 
