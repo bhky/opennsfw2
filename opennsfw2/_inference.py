@@ -27,7 +27,9 @@ def predict_images(
         for image_path in image_paths
     ])
     model = make_open_nsfw_model(weights_path=weights_path)
-    return model.predict(images, batch_size=batch_size)[:, 1].tolist()
+    predictions = model.predict(images, batch_size=batch_size)
+    nsfw_probabilities: List[float] = predictions[:, 1].tolist()
+    return nsfw_probabilities
 
 
 def predict_image(
