@@ -114,8 +114,10 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
   - `weights_path` (`Optional[str]`, default `$HOME/.opennsfw/weights/open_nsfw_weights.h5`): 
     Path to the weights in HDF5 format to be loaded by the model. 
     The weights file will be downloaded if not exists.
-    Users can provide path if the default is not preferred. 
     If `None`, no weights will be downloaded nor loaded to the model.
+    Users can provide path if the default is not preferred. 
+    The environment variable `OPENNSFW2_HOME` can also be used to indicate
+    where the `.opennsfw2` directory should be located/created.
 - Return:
   - `tf.keras.Model` object.
 
