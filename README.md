@@ -183,7 +183,7 @@ This implementation provides the following preprocessing options.
   [TensorFlow 1](https://github.com/mdietrichstein/tensorflow-open_nsfw/blob/master/image_utils.py#L4-L53) 
   implementations. The key steps are:
   - Resize the input Pillow image to `(256, 256)`.
-  - Save the image as JPEG bytes and reload again to a NumPy image 
+  - Store the image as JPEG in memory and reload it again to a NumPy image 
     (this step is mysterious, but somehow it really makes a difference).
   - Crop the centre part of the NumPy image with size `(224, 224)`.
   - Swap the colour channels to BGR.
