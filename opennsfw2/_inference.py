@@ -78,7 +78,7 @@ def predict_video_frames(
         if video_writer is None and output_video_path is not None:
             video_writer = cv2.VideoWriter(  # pylint: disable=no-member
                 output_video_path,
-                cv2.VideoWriter_fourcc("M", "J", "P", "G"),  # pylint: disable=no-member
+                cv2.VideoWriter_fourcc(*"mp4v"),  # pylint: disable=no-member
                 fps, (frame.shape[1], frame.shape[0])
             )
 
