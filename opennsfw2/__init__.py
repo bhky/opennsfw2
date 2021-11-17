@@ -1,9 +1,9 @@
-from ._image import Preprocessing
-from ._image import preprocess_image
-from ._inference import predict_image
-from ._inference import predict_images
-from ._inference import predict_video_frames
-from ._model import make_open_nsfw_model
+from ._image import Preprocessing as Preprocessing
+from ._image import preprocess_image as preprocess_image
+from ._inference import predict_image as predict_image
+from ._inference import predict_images as predict_images
+from ._inference import predict_video_frames as predict_video_frames
+from ._model import make_open_nsfw_model as make_open_nsfw_model
 
 __version__ = "0.5.1"
 __author__ = "Bosco Yung"

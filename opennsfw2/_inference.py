@@ -8,8 +8,9 @@ import cv2  # type: ignore
 import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
 
+from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
-from ._model import get_default_weights_path, make_open_nsfw_model
+from ._model import make_open_nsfw_model
 
 
 def predict_images(
