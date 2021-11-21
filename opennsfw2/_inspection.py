@@ -42,7 +42,7 @@ def make_grad_cam_heatmap(
     heatmap = last_conv_layer_output[0] @ pooled_grads[..., tf.newaxis]
     heatmap = tf.squeeze(heatmap)
 
-    heatmap = (heatmap - tf.reduce_min(heatmap)) / tf.reduce_max(heatmap)
+    heatmap = tf.maximum(heatmap, 0.0) / tf.reduce_max(heatmap)
     return heatmap.numpy()
 
 
