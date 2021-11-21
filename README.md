@@ -134,6 +134,16 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
     The image format must be supported by Pillow.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `grad_cam_path` (`Optional[str]`, default `None`): If not `None`, e.g., `cam.jpg`,
+    a [Gradient-weighted Class Activation Mapping (Grad-CAM)](https://keras.io/examples/vision/grad_cam/) 
+    overlay plot will be saved, which highlights the important region(s) of the 
+    (preprocessed) input image that lead to the prediction.
+  - `grad_cam_height` (`int`, default `512`): Height of the plot, 
+    only valid if `grad_cam_path` is not `None`.
+  - `grad_cam_width` (`int`, default `512`): Width of the plot, 
+    only valid if `grad_cam_path` is not `None`.
+  - `alpha` (`float`, default `0.5`): Opacity of the Grad-CAM layer of the plot,
+    only valid if `grad_cam_path` is not `None`.
 - Return:
   - `nsfw_probability` (`float`): The predicted NSFW probability of the image.
 
