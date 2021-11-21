@@ -13,6 +13,7 @@ def make_grad_cam_heatmap(
         image: np.ndarray,
         model: tf.keras.Model,
         last_conv_layer_name: str,
+        classification_linear_layer_name: str,
         prediction_index: Optional[int] = None
 ) -> np.ndarray:
     """
@@ -24,7 +25,8 @@ def make_grad_cam_heatmap(
 
     grad_model = tf.keras.models.Model(
         model.inputs,
-        [model.get_layer(last_conv_layer_name).output, model.output]
+        [model.get_layer(last_conv_layer_name).output,
+         model.get_layer(classification_linear_layer_name).output]
     )
 
     with tf.GradientTape() as tape:

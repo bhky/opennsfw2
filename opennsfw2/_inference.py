@@ -54,7 +54,7 @@ def predict_image(
 
     if grad_cam_path is not None:
         heatmap = make_grad_cam_heatmap(
-            image, model, "activation_stage3_block2", 1
+            image, model, "activation_stage3_block2", "fc_nsfw", 1
         )
         save_grad_cam(
             image, heatmap, grad_cam_path,
