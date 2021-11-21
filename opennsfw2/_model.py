@@ -53,7 +53,7 @@ def _conv_block(
         padding="same"
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
-    x = tf.nn.relu(x)
+    x = layers.Activation("relu")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2b",
@@ -63,7 +63,7 @@ def _conv_block(
         padding="same"
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
-    x = tf.nn.relu(x)
+    x = layers.Activation("relu")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2c",
@@ -76,7 +76,7 @@ def _conv_block(
 
     x = layers.Add()([x, shortcut])
 
-    return tf.nn.relu(x)
+    return layers.Activation("relu")(x)
 
 
 def _identity_block(
@@ -99,7 +99,7 @@ def _identity_block(
         padding="same"
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
-    x = tf.nn.relu(x)
+    x = layers.Activation("relu")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2b",
@@ -109,7 +109,7 @@ def _identity_block(
         padding="same"
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
-    x = tf.nn.relu(x)
+    x = layers.Activation("relu")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2c",
@@ -122,7 +122,7 @@ def _identity_block(
 
     x = layers.Add()([x, inputs])
 
-    return tf.nn.relu(x)
+    return layers.Activation("relu")(x)
 
 
 def make_open_nsfw_model(
@@ -137,7 +137,7 @@ def make_open_nsfw_model(
                       padding="valid")(x)
 
     x = _batch_norm("bn_1")(x)
-    x = tf.nn.relu(x)
+    x = layers.Activation("relu")(x)
 
     x = layers.MaxPooling2D(pool_size=3, strides=2, padding="same")(x)
 
@@ -187,7 +187,7 @@ def make_open_nsfw_model(
     x = layers.GlobalAveragePooling2D()(x)
 
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
-    output = tf.nn.softmax(logits, name="predictions")
+    output = layers.Activation("softmax", name="predictions")(logits)
 
     model = tf.keras.Model(image_input, output)
 
