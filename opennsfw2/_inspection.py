@@ -62,7 +62,10 @@ def save_grad_cam(
         target_width: int,
         alpha: float
 ) -> None:
-
+    """
+    References:
+    https://keras.io/examples/vision/grad_cam/
+    """
     # Rescale heatmap to a range 0-255.
     heatmap = np.uint8(255 * heatmap)
 
