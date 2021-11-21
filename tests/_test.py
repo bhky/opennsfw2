@@ -26,14 +26,14 @@ class TestModel(unittest.TestCase):
             self.assertAlmostEqual(expected_score, predicted_score, places=3)
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        expected_scores = [0.012, 0.756, 0.067]
+        expected_scores = [0.012, 0.986, 0.067]
         predicted_scores = n2.predict_images(
             IMAGE_PATHS, preprocessing=n2.Preprocessing.YAHOO
         )
         self._assert(expected_scores, predicted_scores)
 
     def test_predict_images_simple_preprocessing(self) -> None:
-        expected_scores = [0.001, 0.597, 0.003]
+        expected_scores = [0.001, 0.911, 0.003]
         predicted_scores = n2.predict_images(
             IMAGE_PATHS, preprocessing=n2.Preprocessing.SIMPLE
         )
@@ -41,7 +41,7 @@ class TestModel(unittest.TestCase):
 
     def test_predict_image(self) -> None:
         self.assertAlmostEqual(
-            0.756,
+            0.986,
             n2.predict_image(IMAGE_PATHS[1], grad_cam_path=OUTPUT_GRAD_CAM_PATH),
             places=3
         )
