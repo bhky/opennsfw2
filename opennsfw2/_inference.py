@@ -10,6 +10,7 @@ from PIL import Image  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
+from ._inspection import make_grad_cam_heatmap, save_grad_cam
 from ._model import make_open_nsfw_model
 
 
@@ -35,17 +36,32 @@ def predict_images(
 def predict_image(
         image_path: str,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
-        weights_path: Optional[str] = get_default_weights_path()
+        weights_path: Optional[str] = get_default_weights_path(),
+        grad_cam_path: Optional[str] = None,
+        grad_cam_height: int = 512,
+        grad_cam_width: int = 512,
+        alpha: float = 0.5
 ) -> float:
     """
     Pipeline from single image path to predicted NSFW probability.
+    Optionally generate and save the Grad-CAM.
     """
-    return predict_images(
-        [image_path],
-        batch_size=1,
-        preprocessing=preprocessing,
-        weights_path=weights_path
-    )[0]
+    image = preprocess_image(Image.open(image_path), preprocessing)
+    model = make_open_nsfw_model(weights_path=weights_path)
+    nsfw_probability = float(
+        model.predict(np.expand_dims(image, 0), batch_size=1)[0][1]
+    )
+
+    if grad_cam_path is not None:
+        heatmap = make_grad_cam_heatmap(
+            image, model, "activation_stage3_block2", 1
+        )
+        save_grad_cam(
+            image, heatmap, grad_cam_path,
+            grad_cam_height, grad_cam_width, alpha
+        )
+
+    return nsfw_probability
 
 
 def predict_video_frames(

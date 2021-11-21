@@ -16,6 +16,7 @@ IMAGE_PATHS = [
     os.path.join(BASE_DIR, "test_image_3.jpg"),
 ]
 VIDEO_PATH = os.path.join(BASE_DIR, "test_video.mp4")
+OUTPUT_GRAD_CAM_PATH = os.path.join(BASE_DIR, "output_grad_cam.jpg")
 
 
 class TestModel(unittest.TestCase):
@@ -40,8 +41,11 @@ class TestModel(unittest.TestCase):
 
     def test_predict_image(self) -> None:
         self.assertAlmostEqual(
-            0.756, n2.predict_image(IMAGE_PATHS[1]), places=3
+            0.756,
+            n2.predict_image(IMAGE_PATHS[1], grad_cam_path=OUTPUT_GRAD_CAM_PATH),
+            places=3
         )
+        self.assertTrue(os.path.exists(OUTPUT_GRAD_CAM_PATH))
 
     def test_predict_video_frames(self) -> None:
         elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(

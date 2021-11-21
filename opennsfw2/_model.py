@@ -34,6 +34,8 @@ def _conv_block(
     conv_name_base = f"conv_stage{stage}_block{block}_branch"
     bn_name_base = f"bn_stage{stage}_block{block}_branch"
     shortcut_name_post = f"_stage{stage}_block{block}_proj_shortcut"
+    final_activation_name = f"activation_stage{stage}_block{block}"
+    activation_name_base = f"{final_activation_name}_branch"
 
     shortcut = layers.Conv2D(
         name=f"conv{shortcut_name_post}",
@@ -53,7 +55,7 @@ def _conv_block(
         padding="same"
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation("relu", name=f"{activation_name_base}2a")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2b",
@@ -63,7 +65,7 @@ def _conv_block(
         padding="same"
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation("relu", name=f"{activation_name_base}2b")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2c",
@@ -76,7 +78,7 @@ def _conv_block(
 
     x = layers.Add()([x, shortcut])
 
-    return layers.Activation("relu")(x)
+    return layers.Activation("relu", name=final_activation_name)(x)
 
 
 def _identity_block(
@@ -90,6 +92,8 @@ def _identity_block(
 
     conv_name_base = f"conv_stage{stage}_block{block}_branch"
     bn_name_base = f"bn_stage{stage}_block{block}_branch"
+    final_activation_name = f"activation_stage{stage}_block{block}"
+    activation_name_base = f"{final_activation_name}_branch"
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2a",
@@ -99,7 +103,7 @@ def _identity_block(
         padding="same"
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation("relu", name=f"{activation_name_base}2a")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2b",
@@ -109,7 +113,7 @@ def _identity_block(
         padding="same"
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation("relu", name=f"{activation_name_base}2b")(x)
 
     x = layers.Conv2D(
         name=f"{conv_name_base}2c",
@@ -122,7 +126,7 @@ def _identity_block(
 
     x = layers.Add()([x, inputs])
 
-    return layers.Activation("relu")(x)
+    return layers.Activation("relu", name=final_activation_name)(x)
 
 
 def make_open_nsfw_model(
