@@ -25,7 +25,7 @@ def predict_image(
 ) -> float:
     """
     Pipeline from single image path to predicted NSFW probability.
-    Optionally generate and save the Grad-CAM.
+    Optionally generate and save the Grad-CAM plot.
     """
     image = preprocess_image(Image.open(image_path), preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
@@ -57,6 +57,7 @@ def predict_images(
 ) -> List[float]:
     """
     Pipeline from image paths to predicted NSFW probabilities.
+    Optionally generate and save the Grad-CAM plots.
     """
     images = np.array([
         preprocess_image(Image.open(image_path), preprocessing)
