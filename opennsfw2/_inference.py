@@ -10,7 +10,7 @@ from PIL import Image  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
-from ._inspection import make_grad_cam_heatmap, save_grad_cam
+from ._inspection import make_and_save_nsfw_grad_cam
 from ._model import make_open_nsfw_model
 
 
@@ -34,11 +34,8 @@ def predict_image(
     )
 
     if grad_cam_path is not None:
-        heatmap = make_grad_cam_heatmap(
-            image, model, "activation_stage3_block2", "fc_nsfw", 1
-        )
-        save_grad_cam(
-            image, heatmap, grad_cam_path,
+        make_and_save_nsfw_grad_cam(
+            image, model, grad_cam_path,
             grad_cam_height, grad_cam_width, alpha
         )
 
@@ -69,11 +66,8 @@ def predict_images(
 
     if grad_cam_paths is not None:
         for image, grad_cam_path in zip(images, grad_cam_paths):
-            heatmap = make_grad_cam_heatmap(
-                image, model, "activation_stage3_block2", "fc_nsfw", 1
-            )
-            save_grad_cam(
-                image, heatmap, grad_cam_path,
+            make_and_save_nsfw_grad_cam(
+                image, model, grad_cam_path,
                 grad_cam_height, grad_cam_width, alpha
             )
 
