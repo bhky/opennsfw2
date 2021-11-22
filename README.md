@@ -156,6 +156,12 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
   - `batch_size` (`int`, default `16`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
+    the corresponding Grad-CAM plots for the input images will be saved.
+    See the description in `predict_image`.
+  - `grad_cam_height`: Same as that in `predict_image`.
+  - `grad_cam_width`: Same as that in `predict_image`.
+  - `alpha`: Same as that in `predict_image`.
 - Return:
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
 
