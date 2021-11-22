@@ -14,25 +14,6 @@ from ._inspection import make_grad_cam_heatmap, save_grad_cam
 from ._model import make_open_nsfw_model
 
 
-def predict_images(
-        image_paths: Sequence[str],
-        batch_size: int = 16,
-        preprocessing: Preprocessing = Preprocessing.YAHOO,
-        weights_path: Optional[str] = get_default_weights_path()
-) -> List[float]:
-    """
-    Pipeline from image paths to predicted NSFW probabilities.
-    """
-    images = np.array([
-        preprocess_image(Image.open(image_path), preprocessing)
-        for image_path in image_paths
-    ])
-    model = make_open_nsfw_model(weights_path=weights_path)
-    predictions = model.predict(images, batch_size=batch_size)
-    nsfw_probabilities: List[float] = predictions[:, 1].tolist()
-    return nsfw_probabilities
-
-
 def predict_image(
         image_path: str,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
@@ -62,6 +43,25 @@ def predict_image(
         )
 
     return nsfw_probability
+
+
+def predict_images(
+        image_paths: Sequence[str],
+        batch_size: int = 16,
+        preprocessing: Preprocessing = Preprocessing.YAHOO,
+        weights_path: Optional[str] = get_default_weights_path()
+) -> List[float]:
+    """
+    Pipeline from image paths to predicted NSFW probabilities.
+    """
+    images = np.array([
+        preprocess_image(Image.open(image_path), preprocessing)
+        for image_path in image_paths
+    ])
+    model = make_open_nsfw_model(weights_path=weights_path)
+    predictions = model.predict(images, batch_size=batch_size)
+    nsfw_probabilities: List[float] = predictions[:, 1].tolist()
+    return nsfw_probabilities
 
 
 def predict_video_frames(
