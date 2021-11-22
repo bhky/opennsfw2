@@ -37,11 +37,15 @@ def make_grad_cam_heatmap(
 
     grads = tape.gradient(class_channel, last_conv_layer_output)
 
+    # Shape: (num_channels,).
     pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
+    # Shape of last_conv_layer_output: (1, h, w, num_channels).
+    # Shape of heatmap: (h, w, 1).
     heatmap = last_conv_layer_output[0] @ pooled_grads[..., tf.newaxis]
     heatmap = tf.squeeze(heatmap)
 
+    # Normalise to [0.0, 1.0].
     heatmap = tf.maximum(heatmap, 0.0) / tf.reduce_max(heatmap)
     return heatmap.numpy()
 
@@ -104,6 +108,5 @@ def make_and_save_nsfw_grad_cam(
         image, open_nsfw_model, "activation_stage3_block2", "fc_nsfw", 1
     )
     save_grad_cam(
-        image, heatmap, grad_cam_path,
-        grad_cam_height, grad_cam_width, alpha
+        image, heatmap, grad_cam_path, grad_cam_height, grad_cam_width, alpha
     )
