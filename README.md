@@ -49,7 +49,8 @@ image_path = "path/to/your/image.jpg"
 nsfw_probability = n2.predict_image(image_path)
 
 # To get the NSFW probabilities of a list of images.
-# This is better than looping with `predict_image` as batching is used here for the model.
+# This is better than looping with `predict_image` as the model will only be instantiated once
+# and batching is used during inference.
 image_paths = [
   "path/to/your/image1.jpg",
   "path/to/your/image2.jpg",
@@ -134,6 +135,16 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
     The image format must be supported by Pillow.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `grad_cam_path` (`Optional[str]`, default `None`): If not `None`, e.g., `cam.jpg`,
+    a [Gradient-weighted Class Activation Mapping (Grad-CAM)](https://keras.io/examples/vision/grad_cam/) 
+    overlay plot will be saved, which highlights the important region(s) of the 
+    (preprocessed) input image that lead to the prediction.
+  - `grad_cam_height` (`int`, default `512`): Height of the plot, 
+    only valid if `grad_cam_path` is not `None`.
+  - `grad_cam_width` (`int`, default `512`): Width of the plot, 
+    only valid if `grad_cam_path` is not `None`.
+  - `alpha` (`float`, default `0.5`): Opacity of the Grad-CAM layer of the plot,
+    only valid if `grad_cam_path` is not `None`.
 - Return:
   - `nsfw_probability` (`float`): The predicted NSFW probability of the image.
 
@@ -145,6 +156,12 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
   - `batch_size` (`int`, default `16`): Batch size to be used for model inference.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
+    the corresponding Grad-CAM plots for the input images will be saved.
+    See the description in `predict_image`.
+  - `grad_cam_height`: Same as that in `predict_image`.
+  - `grad_cam_width`: Same as that in `predict_image`.
+  - `alpha`: Same as that in `predict_image`.
 - Return:
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
 
