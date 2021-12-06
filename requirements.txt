@@ -1,4 +1,5 @@
 gdown>=4.2.0
+matplotlib>=3.0.0
 numpy>=1.14.5
 opencv-python>=4.0.0.0
 Pillow>=8.0.0
