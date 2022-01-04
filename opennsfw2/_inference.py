@@ -5,7 +5,7 @@ Inference utilities.
 from typing import List, Optional, Sequence, Tuple
 
 import cv2  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 from PIL import Image  # type: ignore
 
 from ._download import get_default_weights_path
@@ -27,7 +27,8 @@ def predict_image(
     Pipeline from single image path to predicted NSFW probability.
     Optionally generate and save the Grad-CAM plot.
     """
-    image = preprocess_image(Image.open(image_path), preprocessing)
+    pil_image = Image.open(image_path)
+    image = preprocess_image(pil_image, preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
     nsfw_probability = float(
         model.predict(np.expand_dims(image, 0), batch_size=1)[0][1]
@@ -35,7 +36,7 @@ def predict_image(
 
     if grad_cam_path is not None:
         make_and_save_nsfw_grad_cam(
-            image, model, grad_cam_path,
+            pil_image, preprocessing, model, grad_cam_path,
             grad_cam_height, grad_cam_width, alpha
         )
 
@@ -65,10 +66,10 @@ def predict_images(
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
-        for image, grad_cam_path in zip(images, grad_cam_paths):
+        for image_path, grad_cam_path in zip(image_paths, grad_cam_paths):
             make_and_save_nsfw_grad_cam(
-                image, model, grad_cam_path,
-                grad_cam_height, grad_cam_width, alpha
+                Image.open(image_path), preprocessing, model,
+                grad_cam_path, grad_cam_height, grad_cam_width, alpha
             )
 
     return nsfw_probabilities

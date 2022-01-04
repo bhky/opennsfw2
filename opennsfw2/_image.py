@@ -5,9 +5,11 @@ Image utilities.
 import io
 from enum import auto, Enum
 
-import numpy as np  # type: ignore
+import numpy as np
 import skimage.io  # type: ignore
 from PIL import Image  # type: ignore
+
+from ._typing import NDFloat32Array
 
 
 class Preprocessing(Enum):
@@ -18,7 +20,7 @@ class Preprocessing(Enum):
 def preprocess_image(
         pil_image: Image,
         preprocessing: Preprocessing = Preprocessing.YAHOO
-) -> np.ndarray:
+) -> NDFloat32Array:
     """
     Preprocessing for the pre-trained Open NSFW model weights.
 
@@ -35,7 +37,9 @@ def preprocess_image(
         pil_image_resized.save(fh_im, format="JPEG")
         fh_im.seek(0)
 
-        image = skimage.io.imread(fh_im, as_gray=False).astype(np.float32)
+        image: NDFloat32Array = skimage.io.imread(
+            fh_im, as_gray=False
+        ).astype(np.float32)
 
         height, width, _ = image.shape
         h, w = (224, 224)

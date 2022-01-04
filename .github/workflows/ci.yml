@@ -20,7 +20,6 @@ jobs:
         run: |
           python3 -m pip install pylint
           python3 -m pip install mypy
-          python3 -m pip install numpy==1.19.4
       - name: Test
         run: |
           ./tests/install_from_local_and_test.sh
