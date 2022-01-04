@@ -21,7 +21,7 @@ A simple API is provided for making predictions on images and videos.
 
 # Installation
 
-Python 3.7 or above is required. Tested for 3.7, 3.8, and 3.9.
+Python 3.8 or above is required. Tested for 3.8 and 3.9.
 
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
