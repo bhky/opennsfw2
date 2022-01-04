@@ -37,7 +37,7 @@ class TestModel(unittest.TestCase):
                 self.assertTrue(os.path.exists(paths[i]))
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        expected_probabilities = [0.012, 0.986, 0.067]
+        expected_probabilities = [0.016, 0.983, 0.077]
         predicted_probabilities = n2.predict_images(
             IMAGE_PATHS,
             preprocessing=n2.Preprocessing.YAHOO,
@@ -49,7 +49,7 @@ class TestModel(unittest.TestCase):
         )
 
     def test_predict_images_simple_preprocessing(self) -> None:
-        expected_probabilities = [0.001, 0.911, 0.003]
+        expected_probabilities = [0.001, 0.913, 0.003]
         predicted_probabilities = n2.predict_images(
             IMAGE_PATHS, preprocessing=n2.Preprocessing.SIMPLE
         )
@@ -57,7 +57,7 @@ class TestModel(unittest.TestCase):
 
     def test_predict_image(self) -> None:
         self.assertAlmostEqual(
-            0.986, n2.predict_image(IMAGE_PATHS[1]), places=3
+            0.983, n2.predict_image(IMAGE_PATHS[1]), places=3
         )
 
     def test_predict_video_frames(self) -> None:
