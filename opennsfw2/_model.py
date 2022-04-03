@@ -10,7 +10,7 @@ import os
 from typing import Optional, Tuple
 
 import tensorflow as tf  # type: ignore
-from tensorflow.keras import layers  # type: ignore
+from tensorflow.keras import layers  # type: ignore # pylint: disable=import-error
 
 from ._download import get_default_weights_path, download_weights_to
 
