@@ -1,5 +1,5 @@
 """
-Unit tests.
+Unit test.
 """
 
 import os
