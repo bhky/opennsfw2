@@ -1,7 +1,6 @@
 """
 Inference utilities.
 """
-
 from typing import List, Optional, Sequence, Tuple
 
 import cv2  # type: ignore

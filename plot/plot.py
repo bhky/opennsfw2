@@ -2,7 +2,6 @@
 """
 For plotting the comparison figure.
 """
-
 from typing import List
 
 import matplotlib.pyplot as plt

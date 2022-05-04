@@ -1,7 +1,6 @@
 """
 Image utilities.
 """
-
 import io
 from enum import auto, Enum
 

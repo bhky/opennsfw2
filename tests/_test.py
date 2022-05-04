@@ -1,7 +1,6 @@
 """
 Unit test.
 """
-
 import os
 import unittest
 from typing import Optional, Sequence

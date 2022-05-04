@@ -5,7 +5,6 @@ References:
 https://github.com/mdietrichstein/tensorflow-open_nsfw
 https://github.com/yahoo/open_nsfw
 """
-
 import os
 from typing import Optional, Tuple
 
