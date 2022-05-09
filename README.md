@@ -124,7 +124,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
     If `None`, no weights will be downloaded nor loaded to the model.
     Users can provide path if the default is not preferred. 
     The environment variable `OPENNSFW2_HOME` can also be used to indicate
-    where the `.opennsfw2` directory should be located.
+    where the `.opennsfw2/` directory should be located.
 - Return:
   - `tf.keras.Model` object.
 
