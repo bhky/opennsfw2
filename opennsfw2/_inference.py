@@ -1,7 +1,8 @@
 """
 Inference utilities.
 """
-from typing import List, Optional, Sequence, Tuple
+from enum import auto, Enum
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 import cv2  # type: ignore
 import numpy as np
@@ -11,6 +12,7 @@ from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
 from ._inspection import make_and_save_nsfw_grad_cam
 from ._model import make_open_nsfw_model
+from ._typing import NDFloat32Array
 
 
 def predict_image(
@@ -74,9 +76,35 @@ def predict_images(
     return nsfw_probabilities
 
 
+class Aggregation(str, Enum):
+    MEAN = auto()
+    MEDIAN = auto()
+    MAX = auto()
+    MIN = auto()
+
+
+def _get_aggregation_fn(
+        aggregation: Aggregation
+) -> Callable[[NDFloat32Array], float]:
+
+    def fn(x: NDFloat32Array) -> float:
+        agg: Any = {
+            Aggregation.MEAN: np.mean,
+            Aggregation.MEDIAN: np.median,
+            Aggregation.MAX: np.max,
+            Aggregation.MIN: np.min,
+        }[aggregation]
+        return float(agg(x))
+
+    return fn
+
+
 def predict_video_frames(
         video_path: str,
         frame_interval: int = 8,
+        aggregation_size: int = 8,
+        aggregation: Aggregation = Aggregation.MEAN,
+        batch_size: int = 8,
         output_video_path: Optional[str] = None,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path()
@@ -90,6 +118,7 @@ def predict_video_frames(
     model = make_open_nsfw_model(weights_path=weights_path)
 
     video_writer: Optional[cv2.VideoWriter] = None  # pylint: disable=no-member
+    input_frames: List[NDFloat32Array] = []
     nsfw_probability = 0.0
     nsfw_probabilities: List[float] = []
     frame_count = 0
@@ -112,13 +141,21 @@ def predict_video_frames(
         if frame_count == 1 or (frame_count + 1) % frame_interval == 0:
             pil_frame = Image.fromarray(frame)
             input_frame = preprocess_image(pil_frame, preprocessing)
-            predictions = model.predict(np.expand_dims(input_frame, axis=0), 1)
-            nsfw_probability = np.round(predictions[0][1], 2)
+            input_frames.append(input_frame)
+
+            if frame_count == 1 or len(input_frames) >= aggregation_size:
+                predictions = model.predict(
+                    np.array(input_frames), batch_size=batch_size
+                )
+                agg_fn = _get_aggregation_fn(aggregation)
+                nsfw_probability = agg_fn(predictions[:, 1])
+                input_frames = []
 
         nsfw_probabilities.append(nsfw_probability)
 
         if video_writer is not None:
-            result_text = f"NSFW probability: {str(nsfw_probability)}"
+            prob_str = str(np.round(nsfw_probability, 2))
+            result_text = f"NSFW probability: {prob_str}"
             # RGB colour.
             colour = (255, 0, 0) if nsfw_probability >= 0.8 else (0, 0, 255)
             cv2.putText(  # pylint: disable=no-member
