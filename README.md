@@ -39,9 +39,10 @@ python3 -m pip install .
 # Usage
 
 Quick examples for getting started are given below.
-For more details, please refer to the [API section](#api).
+For more details, please refer to the [API](#api) section.
 
-For images:
+## Images
+
 ```python
 import opennsfw2 as n2
 
@@ -61,7 +62,9 @@ image_paths = [
 
 nsfw_probabilities = n2.predict_images(image_paths)
 ```
-For video:
+
+## Video
+
 ```python
 import opennsfw2 as n2
 
@@ -71,7 +74,9 @@ video_path = "path/to/your/video.mp4"
 # Return two lists giving the elapsed time in seconds and the NSFW probability of each frame.
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
 ```
-For users familiar with NumPy and TensorFlow / Keras:
+
+## Lower level with TensorFlow / Keras
+
 ```python
 import numpy as np
 import opennsfw2 as n2
