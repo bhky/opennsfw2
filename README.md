@@ -39,9 +39,10 @@ python3 -m pip install .
 # Usage
 
 Quick examples for getting started are given below.
-For more details, please refer to the [API section](#api).
+For more details, please refer to the [API](#api) section.
 
-For images:
+## Images
+
 ```python
 import opennsfw2 as n2
 
@@ -61,7 +62,9 @@ image_paths = [
 
 nsfw_probabilities = n2.predict_images(image_paths)
 ```
-For video:
+
+## Video
+
 ```python
 import opennsfw2 as n2
 
@@ -71,7 +74,9 @@ video_path = "path/to/your/video.mp4"
 # Return two lists giving the elapsed time in seconds and the NSFW probability of each frame.
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
 ```
-For users familiar with NumPy and TensorFlow / Keras:
+
+## Lower level with TensorFlow / Keras
+
 ```python
 import numpy as np
 import opennsfw2 as n2
@@ -167,6 +172,13 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
 - Return:
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
 
+### `Aggregation`
+Enum class for aggregation options in video frames prediction.
+- `Aggregation.MEAN`
+- `Aggregation.MEDIAN`
+- `Aggregation.MAX`
+- `Aggregation.MIN`
+
 ### `predict_video_frames`
 End-to-end pipeline function from the input video to predictions.
 - Parameters:
@@ -175,6 +187,18 @@ End-to-end pipeline function from the input video to predictions.
   - `frame_interval` (`int`, default `8`): Prediction will be done on every this 
     number of frames, starting from frame 1, i.e., if this is 8, then 
     prediction will only be done on frame 1, 9, 17, etc.
+  - `aggregation_size` (`int`, default `8`):
+    Number of frames for which their predicted NSFW probabilities will be aggregated.
+    For instance, if a prediction will be done "on" frame 9 (decided by `frame_interval`),
+    then it actually means prediction will be done on `aggregation_size` frames 
+    starting from frame 9, e.g., frames 9 to 16 if the size is 8. 
+    The predicted probabilities will be aggregated. After aggregation, 
+    each of these frames in that interval will be assumed the same aggregated probability.
+  - `aggregation` (`Aggregation` enum, default `Aggregation.MEAN`): 
+    The aggregation method.
+  - `batch_size` (`int`, default `8`, upper-bounded by `aggregation_size`): 
+    The inference batch size for the model. Choose a value that works the best 
+    with your device resources.
   - `output_video_path` (`Optional[str]`, default `None`): 
     If not `None`, e.g., `out.mp4`,
     an output MP4 video with the same frame size and frame rate as

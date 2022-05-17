@@ -61,7 +61,7 @@ class TestModel(unittest.TestCase):
 
     def test_predict_video_frames(self) -> None:
         elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-            VIDEO_PATH, frame_interval=10
+            VIDEO_PATH, frame_interval=2
         )
         self.assertGreater(len(elapsed_seconds), 0)
         self.assertEqual(len(elapsed_seconds), len(nsfw_probabilities))
