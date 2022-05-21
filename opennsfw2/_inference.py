@@ -7,6 +7,7 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 import cv2  # type: ignore
 import numpy as np
 from PIL import Image  # type: ignore
+from tqdm import tqdm
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
@@ -107,7 +108,8 @@ def predict_video_frames(
         batch_size: int = 8,
         output_video_path: Optional[str] = None,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
-        weights_path: Optional[str] = get_default_weights_path()
+        weights_path: Optional[str] = get_default_weights_path(),
+        progress_bar: bool = True
 ) -> Tuple[List[float], List[float]]:
     """
     Make prediction for each video frame.
@@ -123,10 +125,18 @@ def predict_video_frames(
     nsfw_probabilities: List[float] = []
     frame_count = 0
 
+    if progress_bar:
+        pbar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+    else:
+        pbar = None
+
     while cap.isOpened():
         ret, bgr_frame = cap.read()  # Get next video frame.
         if not ret:
             break  # End of given video.
+
+        if pbar is not None:
+            pbar.update(1)
 
         frame_count += 1
         frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
@@ -171,6 +181,9 @@ def predict_video_frames(
         video_writer.release()
     cap.release()
     cv2.destroyAllWindows()  # pylint: disable=no-member
+
+    if pbar is not None:
+        pbar.close()
 
     elapsed_seconds = (np.arange(1, len(nsfw_probabilities) + 1) / fps).tolist()
     return elapsed_seconds, nsfw_probabilities

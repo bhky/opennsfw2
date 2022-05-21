@@ -208,6 +208,7 @@ End-to-end pipeline function from the input video to predictions.
     This output video is for reference only.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `progress_bar` (`bool`, default `True`): Whether to show the progress bar.
 - Return:
   - Tuple of `List[float]`, each with length equals to the number of video frames.
     - `elapsed_seconds`: Video elapsed time in seconds at each frame.
