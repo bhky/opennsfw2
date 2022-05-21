@@ -33,7 +33,7 @@ def predict_image(
     image = preprocess_image(pil_image, preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
     nsfw_probability = float(
-        model.predict(np.expand_dims(image, 0), batch_size=1)[0][1]
+        model.predict(np.expand_dims(image, 0), batch_size=1, verbose=0)[0][1]
     )
 
     if grad_cam_path is not None:
@@ -64,7 +64,7 @@ def predict_images(
         for image_path in image_paths
     ])
     model = make_open_nsfw_model(weights_path=weights_path)
-    predictions = model.predict(images, batch_size=batch_size)
+    predictions = model.predict(images, batch_size=batch_size, verbose=0)
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
@@ -155,7 +155,7 @@ def predict_video_frames(
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
                 predictions = model.predict(
-                    np.array(input_frames), batch_size=batch_size
+                    np.array(input_frames), batch_size=batch_size, verbose=0
                 )
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
