@@ -7,7 +7,7 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 import cv2  # type: ignore
 import numpy as np
 from PIL import Image  # type: ignore
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
@@ -126,7 +126,7 @@ def predict_video_frames(
     frame_count = 0
 
     if progress_bar:
-        pbar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+        pbar = tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))  # pylint: disable=no-member
     else:
         pbar = None
 
