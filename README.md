@@ -160,7 +160,8 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
 - Parameters:
   - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
     The image format must be supported by Pillow.
-  - `batch_size` (`int`, default `16`): Batch size to be used for model inference.
+  - `batch_size` (`int`, default `8`): Batch size to be used for model inference. 
+    Choose a value that works the best with your device resources.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
   - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
@@ -197,7 +198,7 @@ End-to-end pipeline function from the input video to predictions.
   - `aggregation` (`Aggregation` enum, default `Aggregation.MEAN`): 
     The aggregation method.
   - `batch_size` (`int`, default `8`, upper-bounded by `aggregation_size`): 
-    The inference batch size for the model. Choose a value that works the best 
+    Batch size to be used for model inference. Choose a value that works the best 
     with your device resources.
   - `output_video_path` (`Optional[str]`, default `None`): 
     If not `None`, e.g., `out.mp4`,

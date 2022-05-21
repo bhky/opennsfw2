@@ -47,7 +47,7 @@ def predict_image(
 
 def predict_images(
         image_paths: Sequence[str],
-        batch_size: int = 16,
+        batch_size: int = 8,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
         grad_cam_paths: Optional[Sequence[str]] = None,
