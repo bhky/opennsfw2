@@ -21,7 +21,7 @@ def predict_image(
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
         grad_cam_path: Optional[str] = None,
-        alpha: float = 0.5
+        alpha: float = 0.8
 ) -> float:
     """
     Pipeline from single image path to predicted NSFW probability.
