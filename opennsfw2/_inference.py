@@ -21,8 +21,6 @@ def predict_image(
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
         grad_cam_path: Optional[str] = None,
-        grad_cam_height: int = 512,
-        grad_cam_width: int = 512,
         alpha: float = 0.5
 ) -> float:
     """
@@ -38,8 +36,7 @@ def predict_image(
 
     if grad_cam_path is not None:
         make_and_save_nsfw_grad_cam(
-            pil_image, preprocessing, model, grad_cam_path,
-            grad_cam_height, grad_cam_width, alpha
+            pil_image, preprocessing, model, grad_cam_path, alpha
         )
 
     return nsfw_probability
@@ -51,9 +48,7 @@ def predict_images(
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
         grad_cam_paths: Optional[Sequence[str]] = None,
-        grad_cam_height: int = 512,
-        grad_cam_width: int = 512,
-        alpha: float = 0.5
+        alpha: float = 0.8
 ) -> List[float]:
     """
     Pipeline from image paths to predicted NSFW probabilities.
@@ -71,7 +66,7 @@ def predict_images(
         for image_path, grad_cam_path in zip(image_paths, grad_cam_paths):
             make_and_save_nsfw_grad_cam(
                 Image.open(image_path), preprocessing, model,
-                grad_cam_path, grad_cam_height, grad_cam_width, alpha
+                grad_cam_path, alpha
             )
 
     return nsfw_probabilities

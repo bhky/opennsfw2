@@ -72,8 +72,6 @@ def save_grad_cam(
         pil_image: Image,
         heatmap: NDFloat32Array,
         grad_cam_path: str,
-        target_height: int,
-        target_width: int,
         alpha: float
 ) -> None:
     """
@@ -92,8 +90,7 @@ def save_grad_cam(
     jet_heatmap = jet_colors[scaled_heatmap]
 
     # Superimpose the heatmap on the input image after resizing.
-    jet_heatmap = _resize(jet_heatmap, target_height, target_width)
-    pil_image = pil_image.resize((target_width, target_height))
+    jet_heatmap = _resize(jet_heatmap, pil_image.height, pil_image.width)
 
     superimposed_image = jet_heatmap * alpha + np.array(pil_image)
     pil_superimposed_image = tf.keras.preprocessing.image.array_to_img(
@@ -109,15 +106,10 @@ def make_and_save_nsfw_grad_cam(
         preprocessing: Preprocessing,
         open_nsfw_model: tf.keras.Model,
         grad_cam_path: str,
-        grad_cam_height: int,
-        grad_cam_width: int,
         alpha: float
 ) -> None:
     heatmap = make_grad_cam_heatmap(
         preprocess_image(pil_image, preprocessing), open_nsfw_model,
         "activation_stage3_block2", "fc_nsfw", 1
     )
-    save_grad_cam(
-        pil_image, heatmap,
-        grad_cam_path, grad_cam_height, grad_cam_width, alpha
-    )
+    save_grad_cam(pil_image, heatmap, grad_cam_path, alpha)
