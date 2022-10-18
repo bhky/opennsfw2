@@ -6,6 +6,7 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 import cv2  # type: ignore
 import numpy as np
+import tensorflow as tf  # type: ignore
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
 
@@ -30,9 +31,7 @@ def predict_image(
     pil_image = Image.open(image_path)
     image = preprocess_image(pil_image, preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
-    nsfw_probability = float(
-        model.predict(np.expand_dims(image, 0), batch_size=1, verbose=0)[0][1]
-    )
+    nsfw_probability = float(model(np.expand_dims(image, 0)).numpy()[0][1])
 
     if grad_cam_path is not None:
         make_and_save_nsfw_grad_cam(
@@ -54,7 +53,7 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    images = np.array([
+    images = tf.convert_to_tensor([
         preprocess_image(Image.open(image_path), preprocessing)
         for image_path in image_paths
     ])
@@ -150,7 +149,8 @@ def predict_video_frames(
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
                 predictions = model.predict(
-                    np.array(input_frames), batch_size=batch_size, verbose=0
+                    tf.convert_to_tensor(input_frames),
+                    batch_size=batch_size, verbose=0
                 )
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
