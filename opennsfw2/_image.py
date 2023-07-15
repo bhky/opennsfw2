@@ -30,7 +30,9 @@ def preprocess_image(
         pil_image = pil_image.convert("RGB")
 
     if preprocessing == Preprocessing.YAHOO:
-        pil_image_resized = pil_image.resize((256, 256), resample=Image.BILINEAR)
+        pil_image_resized = pil_image.resize(
+            (256, 256), resample=Image.BILINEAR  # pylint: disable=no-member
+        )
 
         fh_im = io.BytesIO()
         pil_image_resized.save(fh_im, format="JPEG")
@@ -48,7 +50,9 @@ def preprocess_image(
         image = image[h_off:h_off + h, w_off:w_off + w, :]
 
     elif preprocessing == Preprocessing.SIMPLE:
-        pil_image_resized = pil_image.resize((224, 224), resample=Image.BILINEAR)
+        pil_image_resized = pil_image.resize(
+            (224, 224), resample=Image.BILINEAR  # pylint: disable=no-member
+        )
         image = np.array(pil_image_resized).astype(np.float32)
 
     else:
