@@ -4,7 +4,7 @@ Inspection utilities.
 from typing import Optional
 
 import numpy as np
-import tensorflow as tf  # type: ignore
+import tensorflow as tf  # type: ignore # pylint: disable=import-error
 from keras_core import Model  # type: ignore
 from keras_core.preprocessing.image import array_to_img  # type: ignore
 from matplotlib import cm  # type: ignore
