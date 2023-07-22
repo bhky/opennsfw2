@@ -13,6 +13,9 @@ from keras_core import layers, KerasTensor, Model  # type: ignore
 from ._download import get_default_weights_path, download_weights_to
 
 
+DATA_FORMAT = "channels_last"
+
+
 def _batch_norm(name: str) -> layers.BatchNormalization:
     return layers.BatchNormalization(
         name=name, epsilon=1e-05,  # Default used in Caffe.
@@ -40,7 +43,8 @@ def _conv_block(
         filters=num_filters_3,
         kernel_size=1,
         strides=stride,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(inputs)
 
     shortcut = _batch_norm(f"bn{shortcut_name_post}")(shortcut)
@@ -50,7 +54,8 @@ def _conv_block(
         filters=num_filters_1,
         kernel_size=1,
         strides=stride,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
     x = layers.Activation("relu", name=f"{activation_name_base}2a")(x)
@@ -60,7 +65,8 @@ def _conv_block(
         filters=num_filters_2,
         kernel_size=kernel_size,
         strides=1,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
     x = layers.Activation("relu", name=f"{activation_name_base}2b")(x)
@@ -70,7 +76,8 @@ def _conv_block(
         filters=num_filters_3,
         kernel_size=1,
         strides=1,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(x)
     x = _batch_norm(f"{bn_name_base}2c")(x)
 
@@ -98,7 +105,8 @@ def _identity_block(
         filters=num_filters_1,
         kernel_size=1,
         strides=1,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(inputs)
     x = _batch_norm(f"{bn_name_base}2a")(x)
     x = layers.Activation("relu", name=f"{activation_name_base}2a")(x)
@@ -108,7 +116,8 @@ def _identity_block(
         filters=num_filters_2,
         kernel_size=kernel_size,
         strides=1,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(x)
     x = _batch_norm(f"{bn_name_base}2b")(x)
     x = layers.Activation("relu", name=f"{activation_name_base}2b")(x)
@@ -118,7 +127,8 @@ def _identity_block(
         filters=num_filters_3,
         kernel_size=1,
         strides=1,
-        padding="same"
+        padding="same",
+        data_format=DATA_FORMAT
     )(x)
     x = _batch_norm(f"{bn_name_base}2c")(x)
 
@@ -134,14 +144,15 @@ def make_open_nsfw_model(
     image_input = layers.Input(shape=input_shape, name="input")
     x = image_input
 
-    x = layers.ZeroPadding2D((3, 3))(x)
+    x = layers.ZeroPadding2D((3, 3), data_format=DATA_FORMAT)(x)
     x = layers.Conv2D(name="conv_1", filters=64, kernel_size=7, strides=2,
-                      padding="valid")(x)
+                      padding="valid", data_format=DATA_FORMAT)(x)
 
     x = _batch_norm("bn_1")(x)
     x = layers.Activation("relu")(x)
 
-    x = layers.MaxPooling2D(pool_size=3, strides=2, padding="same")(x)
+    x = layers.MaxPooling2D(pool_size=3, strides=2,
+                            padding="same", data_format=DATA_FORMAT)(x)
 
     x = _conv_block(stage=0, block=0, inputs=x,
                     nums_filters=(32, 32, 128),
@@ -186,7 +197,7 @@ def make_open_nsfw_model(
                         nums_filters=(256, 256, 1024),
                         kernel_size=3)
 
-    x = layers.GlobalAveragePooling2D()(x)
+    x = layers.GlobalAveragePooling2D(data_format=DATA_FORMAT)(x)
 
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
     output = layers.Activation("softmax", name="predictions")(logits)
