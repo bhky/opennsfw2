@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         python: [ "3.8", "3.9", "3.10" ]
-        backend: [ "tensorflow", "torch", "jax" ]
+        backend: [ "tensorflow", "torch", "jax[cpu]" ]
     name: python-${{ matrix.python }}-${{ matrix.backend }}
     steps:
       - name: Checkout
