@@ -14,8 +14,8 @@ jobs:
             package: tensorflow
           - backend: torch
             package: torch
-          - backend: tax
-            package: tax[cpu]
+          - backend: jax
+            package: jax[cpu]
     name: python-${{ matrix.python }}-${{ matrix.backend }}
     steps:
       - name: Checkout
