@@ -11,7 +11,7 @@ jobs:
         backend: [ tensorflow, torch, jax ]
         include:
           - backend: tensorflow
-            package: tensorflow-cpu
+            package: tensorflow
           - backend: torch
             package: torch
           - backend: tax
