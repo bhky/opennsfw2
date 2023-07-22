@@ -5,6 +5,8 @@ import os
 import unittest
 from typing import Optional, Sequence
 
+import keras_core
+
 import opennsfw2 as n2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,10 +38,9 @@ class TestModel(unittest.TestCase):
                 self.assertTrue(os.path.exists(paths[i]))
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        try:
-            import tensorflow
+        if keras_core.backend.backend() == "tensorflow":
             grad_cam_paths = OUTPUT_GRAD_CAM_PATHS
-        except ModuleNotFoundError:
+        else:
             grad_cam_paths = None
 
         expected_probabilities = [0.016, 0.983, 0.077]
