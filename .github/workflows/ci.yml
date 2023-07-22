@@ -7,8 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [ "3.8", "3.9", "3.10" ]
-        backend: [ "tensorflow", "torch", "jax[cpu]" ]
+        python: [ 3.8, 3.9, 3.10 ]
+        backend: [ tensorflow, torch, jax ]
+        include:
+          - backend: tensorflow
+            package: tensorflow-cpu
+          - backend: torch
+            package: torch
+          - backend: tax
+            package: tax[cpu]
     name: python-${{ matrix.python }}-${{ matrix.backend }}
     steps:
       - name: Checkout
@@ -21,7 +28,7 @@ jobs:
         run: |
           python3 -m pip install pylint
           python3 -m pip install mypy
-          python3 -m pip install ${{ matrix.backend }}
+          python3 -m pip install ${{ matrix.package }}
       - name: Test
         run: |
           ./tests/install_from_local_and_test.sh ${{ matrix.backend }}
