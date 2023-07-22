@@ -22,7 +22,6 @@ jobs:
           python3 -m pip install pylint
           python3 -m pip install mypy
           python3 -m pip install ${{ matrix.backend }}
-          export KERAS_BACKEND="${{ matrix.backend }}"
       - name: Test
         run: |
-          ./tests/install_from_local_and_test.sh
+          ./tests/install_from_local_and_test.sh ${{ matrix.backend }}
