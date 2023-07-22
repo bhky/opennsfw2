@@ -152,10 +152,12 @@ def predict_video_frames(
             input_frames.append(input_frame)
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
-                predictions = model.predict(
-                    np.array(input_frames),
-                    batch_size=batch_size, verbose=0
-                )
+                prediction_batches: List[NDFloat32Array] = []
+                for i in range(0, len(input_frames), batch_size):
+                    batch = np.array(input_frames[i: i + batch_size])
+                    prediction_batches.append(model(batch))
+                predictions = np.concatenate(prediction_batches, axis=0)
+
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
                 input_frames = []
