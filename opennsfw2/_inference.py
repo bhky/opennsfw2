@@ -29,7 +29,7 @@ def predict_image(
     pil_image = Image.open(image_path)
     image = preprocess_image(pil_image, preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
-    nsfw_probability = float(model(np.expand_dims(image, 0)).numpy()[0][1])
+    nsfw_probability = float(model(np.expand_dims(image, 0))[0][1])
 
     if grad_cam_path is not None:
         # TensorFlow will only be imported here.
