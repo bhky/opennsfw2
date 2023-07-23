@@ -19,13 +19,14 @@ This **Open-NSFW 2** project provides a Keras Core implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
 Note that [Keras Core](https://keras.io/keras_core/) is compatible with 
-TensorFlow, JAX, and PyTorch.
+TensorFlow, JAX, and PyTorch. However, currently this model is
+only guaranteed to work with TensorFlow and JAX.
 
 A simple API is provided for making predictions on images and videos.
 
 # Installation
 
-Tested for Python 3.8, 3.9, and 3.10.
+Tested with TensorFlow and JAX, for Python 3.8, 3.9, and 3.10.
 
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
@@ -148,6 +149,7 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
     a [Gradient-weighted Class Activation Mapping (Grad-CAM)](https://keras.io/examples/vision/grad_cam/) 
     overlay plot will be saved, which highlights the important region(s) of the 
     (preprocessed) input image that lead to the prediction.
+    Note that this feature is currently only supported by the TensorFlow backend.
   - `alpha` (`float`, default `0.8`): Opacity of the Grad-CAM layer of the plot,
     only valid if `grad_cam_path` is not `None`.
 - Return:
@@ -165,6 +167,7 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
   - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
     the corresponding Grad-CAM plots for the input images will be saved.
     See the description in `predict_image`.
+    Note that this feature is currently only supported by the TensorFlow backend.
   - `alpha`: Same as that in `predict_image`.
 - Return:
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
