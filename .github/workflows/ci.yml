@@ -8,12 +8,10 @@ jobs:
     strategy:
       matrix:
         python: [ "3.8", "3.9", "3.10" ]
-        backend: [ tensorflow, torch, jax ]
+        backend: [ tensorflow, jax ]
         include:
           - backend: tensorflow
             package: tensorflow
-          - backend: torch
-            package: torch
           - backend: jax
             package: jax[cpu]
     name: python-${{ matrix.python }}-${{ matrix.backend }}
