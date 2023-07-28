@@ -28,6 +28,18 @@ A simple API is provided for making predictions on images and videos.
 
 Tested with TensorFlow and JAX, for Python 3.8, 3.9, and 3.10.
 
+A note on PyTorch:
+
+The OpenNSFW 2 model can in fact be run on PyTorch, but the biggest issue is 
+that the inference output on PyTorch is quite different from 
+that on TensorFlow and JAX. The reason is still unknown. In addition, 
+inference is much slower on PyTorch probably because of the issues 
+discussed [here](https://keras.io/keras_core/announcement/),
+i.e., PyTorch uses `channels_first` for its image data format, but this model
+uses `channels_last` (as in TensorFLow and JAX), hence Keras has to 
+convert the channel order back and forth at each layer.
+Therefore, at the moment it is not recommended to use PyTorch for this model.
+
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
 python3 -m pip install --upgrade opennsfw2
