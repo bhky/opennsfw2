@@ -7,6 +7,6 @@ from ._inference import predict_images as predict_images
 from ._inference import predict_video_frames as predict_video_frames
 from ._model import make_open_nsfw_model as make_open_nsfw_model
 
-__version__ = "0.10.2"
+__version__ = "0.11.0"
 __author__ = "Bosco Yung"
 __license__ = "MIT"
