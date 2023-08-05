@@ -6,13 +6,11 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 import cv2
 import numpy as np
-import tensorflow as tf  # type: ignore
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
-from ._inspection import make_and_save_nsfw_grad_cam
 from ._model import make_open_nsfw_model
 from ._typing import NDFloat32Array
 
@@ -31,9 +29,12 @@ def predict_image(
     pil_image = Image.open(image_path)
     image = preprocess_image(pil_image, preprocessing)
     model = make_open_nsfw_model(weights_path=weights_path)
-    nsfw_probability = float(model(np.expand_dims(image, 0)).numpy()[0][1])
+    nsfw_probability = float(model(np.expand_dims(image, 0))[0][1])
 
     if grad_cam_path is not None:
+        # TensorFlow will only be imported here.
+        from ._inspection import make_and_save_nsfw_grad_cam
+
         make_and_save_nsfw_grad_cam(
             pil_image, preprocessing, model, grad_cam_path, alpha
         )
@@ -53,7 +54,7 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    images = tf.convert_to_tensor([
+    images = np.array([
         preprocess_image(Image.open(image_path), preprocessing)
         for image_path in image_paths
     ])
@@ -62,6 +63,9 @@ def predict_images(
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
+        # TensorFlow will only be imported here.
+        from ._inspection import make_and_save_nsfw_grad_cam
+
         for image_path, grad_cam_path in zip(image_paths, grad_cam_paths):
             make_and_save_nsfw_grad_cam(
                 Image.open(image_path), preprocessing, model,
@@ -148,10 +152,12 @@ def predict_video_frames(
             input_frames.append(input_frame)
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
-                predictions = model.predict(
-                    tf.convert_to_tensor(input_frames),
-                    batch_size=batch_size, verbose=0
-                )
+                prediction_batches: List[NDFloat32Array] = []
+                for i in range(0, len(input_frames), batch_size):
+                    batch = np.array(input_frames[i: i + batch_size])
+                    prediction_batches.append(model(batch))
+                predictions = np.concatenate(prediction_batches, axis=0)
+
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
                 input_frames = []

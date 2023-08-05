@@ -8,11 +8,17 @@ jobs:
     strategy:
       matrix:
         python: [ "3.8", "3.9", "3.10" ]
-    name: python-${{ matrix.python }}
+        backend: [ tensorflow, jax ]
+        include:
+          - backend: tensorflow
+            package: tensorflow
+          - backend: jax
+            package: jax[cpu]
+    name: python-${{ matrix.python }}-${{ matrix.backend }}
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - name: Setup python-${{ matrix.python }}
+      - name: Setup python-${{ matrix.python }}-${{ matrix.backend }}
         uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python }}
@@ -20,6 +26,7 @@ jobs:
         run: |
           python3 -m pip install pylint
           python3 -m pip install mypy
+          python3 -m pip install ${{ matrix.package }}
       - name: Test
         run: |
-          ./tests/install_from_local_and_test.sh
+          ./tests/install_from_local_and_test.sh ${{ matrix.backend }}

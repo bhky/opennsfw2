@@ -8,8 +8,7 @@ https://github.com/yahoo/open_nsfw
 import os
 from typing import Optional, Tuple
 
-import tensorflow as tf  # type: ignore
-from tensorflow.keras import layers  # type: ignore # pylint: disable=import-error
+from keras_core import layers, KerasTensor, Model  # type: ignore
 
 from ._download import get_default_weights_path, download_weights_to
 
@@ -23,11 +22,11 @@ def _batch_norm(name: str) -> layers.BatchNormalization:
 def _conv_block(
         stage: int,
         block: int,
-        inputs: tf.Tensor,
+        inputs: KerasTensor,
         nums_filters: Tuple[int, int, int],
         kernel_size: int = 3,
         stride: int = 2,
-) -> tf.Tensor:
+) -> KerasTensor:
     num_filters_1, num_filters_2, num_filters_3 = nums_filters
 
     conv_name_base = f"conv_stage{stage}_block{block}_branch"
@@ -83,10 +82,10 @@ def _conv_block(
 def _identity_block(
         stage: int,
         block: int,
-        inputs: tf.Tensor,
+        inputs: KerasTensor,
         nums_filters: Tuple[int, int, int],
         kernel_size: int
-) -> tf.Tensor:
+) -> KerasTensor:
     num_filters_1, num_filters_2, num_filters_3 = nums_filters
 
     conv_name_base = f"conv_stage{stage}_block{block}_branch"
@@ -131,11 +130,11 @@ def _identity_block(
 def make_open_nsfw_model(
         input_shape: Tuple[int, int, int] = (224, 224, 3),
         weights_path: Optional[str] = get_default_weights_path()
-) -> tf.keras.Model:
+) -> Model:
     image_input = layers.Input(shape=input_shape, name="input")
     x = image_input
 
-    x = tf.pad(x, [[0, 0], [3, 3], [3, 3], [0, 0]], "CONSTANT")
+    x = layers.ZeroPadding2D((3, 3))(x)
     x = layers.Conv2D(name="conv_1", filters=64, kernel_size=7, strides=2,
                       padding="valid")(x)
 
@@ -192,7 +191,7 @@ def make_open_nsfw_model(
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
     output = layers.Activation("softmax", name="predictions")(logits)
 
-    model = tf.keras.Model(image_input, output)
+    model = Model(image_input, output)
 
     if weights_path is not None:
         if not os.path.isfile(weights_path):

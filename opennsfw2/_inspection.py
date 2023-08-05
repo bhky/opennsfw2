@@ -4,8 +4,10 @@ Inspection utilities.
 from typing import Optional
 
 import numpy as np
-import tensorflow as tf  # type: ignore
-from matplotlib import cm  # type: ignore
+import tensorflow as tf  # type: ignore # pylint: disable=import-error
+from keras_core import Model  # type: ignore
+from keras_core.preprocessing.image import array_to_img  # type: ignore
+from matplotlib import colormaps as cm  # type: ignore
 from PIL import Image  # type: ignore
 
 from ._image import preprocess_image, Preprocessing
@@ -14,7 +16,7 @@ from ._typing import NDUInt8Array, NDFloat32Array
 
 def make_grad_cam_heatmap(
         preprocessed_image: NDFloat32Array,
-        model: tf.keras.Model,
+        model: Model,
         last_conv_layer_name: str,
         classification_linear_layer_name: str,
         prediction_index: Optional[int] = None
@@ -28,7 +30,7 @@ def make_grad_cam_heatmap(
             "Input preprocessed image array must have 3 dimensions."
         )
 
-    grad_model = tf.keras.models.Model(
+    grad_model = Model(
         model.inputs,
         [model.get_layer(last_conv_layer_name).output,
          model.get_layer(classification_linear_layer_name).output]
@@ -63,7 +65,7 @@ def _resize(
         target_height: int,
         target_width: int
 ) -> NDUInt8Array:
-    pil_image = tf.keras.preprocessing.image.array_to_img(image)
+    pil_image = array_to_img(image)
     pil_image = pil_image.resize((target_width, target_height))
     return np.array(pil_image)
 
@@ -93,9 +95,7 @@ def save_grad_cam(
     jet_heatmap = _resize(jet_heatmap, pil_image.height, pil_image.width)
 
     superimposed_image = jet_heatmap * alpha + np.array(pil_image)
-    pil_superimposed_image = tf.keras.preprocessing.image.array_to_img(
-        superimposed_image
-    )
+    pil_superimposed_image = array_to_img(superimposed_image)
 
     # Save the superimposed image.
     pil_superimposed_image.save(grad_cam_path)
@@ -104,7 +104,7 @@ def save_grad_cam(
 def make_and_save_nsfw_grad_cam(
         pil_image: Image,
         preprocessing: Preprocessing,
-        open_nsfw_model: tf.keras.Model,
+        open_nsfw_model: Model,
         grad_cam_path: str,
         alpha: float
 ) -> None:

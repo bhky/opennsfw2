@@ -15,15 +15,30 @@ is now discontinued and Caffe is also becoming less popular.
 Please see the description on the Yahoo project page for
 the context, definitions, and model training details.
 
-This **Open-NSFW 2** project provides a TensorFlow 2 implementation of the
+This **Open-NSFW 2** project provides a Keras Core implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
+Note that [Keras Core](https://keras.io/keras_core/) is compatible with 
+TensorFlow, JAX, and PyTorch. However, currently this model is
+only guaranteed to work with TensorFlow and JAX.
 
 A simple API is provided for making predictions on images and videos.
 
 # Installation
 
-Tested for Python 3.8, 3.9, and 3.10.
+Tested with TensorFlow and JAX, for Python 3.8, 3.9, and 3.10.
+
+A note on PyTorch:
+
+The OpenNSFW 2 model can in fact be run on PyTorch, but the biggest issue is 
+that the inference output on PyTorch is quite different from 
+that on TensorFlow and JAX. The reason is still unknown. In addition, 
+inference is much slower on PyTorch probably because of the issues 
+discussed [here](https://keras.io/keras_core/announcement/),
+i.e., PyTorch uses `channels_first` for its image data format, but this model
+uses `channels_last` (as in TensorFLow and JAX), hence Keras has to 
+convert the channel order back and forth at each layer.
+Therefore, at the moment it is not recommended to use PyTorch for this model.
 
 The best way to install Open-NSFW 2 with its dependencies is from PyPI:
 ```shell
@@ -75,7 +90,7 @@ video_path = "path/to/your/video.mp4"
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
 ```
 
-## Lower level with TensorFlow / Keras
+## Lower level with Keras Core
 
 ```python
 import numpy as np
@@ -92,7 +107,7 @@ image = n2.preprocess_image(pil_image, n2.Preprocessing.YAHOO)
 # By default, this call will search for the pre-trained weights file from path:
 # $HOME/.opennsfw2/weights/open_nsfw_weights.h5
 # If not exists, the file will be downloaded from this repository.
-# The model is a `tf.keras.Model` object.
+# The model is a `keras_core.Model` object.
 model = n2.make_open_nsfw_model()
 
 # Make predictions.
@@ -146,6 +161,7 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
     a [Gradient-weighted Class Activation Mapping (Grad-CAM)](https://keras.io/examples/vision/grad_cam/) 
     overlay plot will be saved, which highlights the important region(s) of the 
     (preprocessed) input image that lead to the prediction.
+    Note that this feature is currently only supported by the TensorFlow backend.
   - `alpha` (`float`, default `0.8`): Opacity of the Grad-CAM layer of the plot,
     only valid if `grad_cam_path` is not `None`.
 - Return:
@@ -163,6 +179,7 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
   - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
     the corresponding Grad-CAM plots for the input images will be saved.
     See the description in `predict_image`.
+    Note that this feature is currently only supported by the TensorFlow backend.
   - `alpha`: Same as that in `predict_image`.
 - Return:
   - `nsfw_probabilities` (`List[float]`): Predicted NSFW probabilities of the images.
@@ -240,14 +257,14 @@ This implementation provides the following preprocessing options.
 Using 521 private test images, the NSFW probabilities given by 
 three different settings are compared:
 - [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw) with `YAHOO` preprocessing.
-- TensorFlow 2 implementation with `YAHOO` preprocessing.
-- TensorFlow 2 implementation with `SIMPLE` preprocessing.
+- Keras Core implementation with `YAHOO` preprocessing.
+- Keras Core implementation with `SIMPLE` preprocessing.
 
 The following figure shows the result:
 
 ![NSFW probabilities comparison](docs/nsfw_probabilities_comparison.png)
 
-The current TensorFlow 2 implementation with `YAHOO` preprocessing
+The current Keras Core implementation with `YAHOO` preprocessing
 can totally reproduce the well-tested TensorFlow 1 result, 
 with small floating point errors only.
 
