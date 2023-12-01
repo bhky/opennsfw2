@@ -48,6 +48,24 @@ def predict_image(
     return nsfw_probability
 
 
+def _predict_images_in_batches(
+        model_: Model,
+        images: List[NDFloat32Array],
+        batch_size: int
+) -> NDFloat32Array:
+    """
+    It is on purpose not to use `model.predict` because many users would like
+    to use the API in loops. See here:
+    https://keras.io/api/models/model_training_apis/#predict-method
+    """
+    prediction_batches: List[NDFloat32Array] = []
+    for i in range(0, len(images), batch_size):
+        batch = np.array(images[i: i + batch_size])
+        prediction_batches.append(model_(batch))
+    predictions = np.concatenate(prediction_batches, axis=0)
+    return predictions
+
+
 def predict_images(
         image_paths: Sequence[str],
         batch_size: int = 8,
@@ -60,14 +78,14 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    images = np.array([
+    images = [
         preprocess_image(Image.open(image_path), preprocessing)
         for image_path in image_paths
-    ])
+    ]
     global model
     if model is None:
         model = make_open_nsfw_model(weights_path=weights_path)
-    predictions = model.predict(images, batch_size=batch_size, verbose=0)
+    predictions = _predict_images_in_batches(model, images, batch_size)
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
@@ -162,12 +180,9 @@ def predict_video_frames(
             input_frames.append(input_frame)
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
-                prediction_batches: List[NDFloat32Array] = []
-                for i in range(0, len(input_frames), batch_size):
-                    batch = np.array(input_frames[i: i + batch_size])
-                    prediction_batches.append(model(batch))
-                predictions = np.concatenate(prediction_batches, axis=0)
-
+                predictions = _predict_images_in_batches(
+                    model, input_frames, batch_size
+                )
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
                 input_frames = []
