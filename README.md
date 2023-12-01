@@ -58,6 +58,8 @@ For more details, please refer to the [API](#api) section.
 
 ## Images
 
+### Single function call
+
 ```python
 import opennsfw2 as n2
 
@@ -70,12 +72,32 @@ nsfw_probability = n2.predict_image(image_path)
 # This is better than looping with `predict_image` as the model will only be instantiated once
 # and batching is used during inference.
 image_paths = [
-  "path/to/your/image1.jpg",
-  "path/to/your/image2.jpg",
-  # ...
+    "path/to/your/image1.jpg",
+    "path/to/your/image2.jpg",
+    # ...
 ]
 
 nsfw_probabilities = n2.predict_images(image_paths)
+```
+
+### Multiple function calls in a loop
+
+If the above functions are to be used in a loop, it is strongly recommended
+to first instantiate a model object outside the loop. 
+By doing so, the model object will not have to be recreated internally each time
+the functions are called. This is in particularly crucial when using the 
+TensorFlow backend, because of the well-known memory-leak issue.
+
+```python
+import opennsfw2 as n2
+
+model = n2.make_open_nsfw_model()
+
+image_paths = []  # Your image paths.
+
+for image_path in image_paths:
+    nsfw_probability = n2.predict_image(image_path, model=model)
+    # ...
 ```
 
 ## Video
@@ -156,7 +178,10 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
   - `image_path` (`str`): Path to the input image file. 
     The image format must be supported by Pillow.
   - `preprocessing`: Same as that in `preprocess_image`.
-  - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `model` (`Optional[keras.Model]`, default `None`): 
+    Optionally pass an instantiated model object.
+    Useful for using the function in a loop, see [here](#multiple-function-calls-in-a-loop).
+  - `weights_path`: Same as that in `make_open_nsfw_model`. Ignored if `model` is not `None`.
   - `grad_cam_path` (`Optional[str]`, default `None`): If not `None`, e.g., `cam.jpg`,
     a [Gradient-weighted Class Activation Mapping (Grad-CAM)](https://keras.io/examples/vision/grad_cam/) 
     overlay plot will be saved, which highlights the important region(s) of the 
@@ -175,7 +200,10 @@ End-to-end pipeline function from the input images to the predicted NSFW probabi
   - `batch_size` (`int`, default `8`): Batch size to be used for model inference. 
     Choose a value that works the best with your device resources.
   - `preprocessing`: Same as that in `preprocess_image`.
-  - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `model` (`Optional[keras.Model]`, default `None`): 
+    Optionally pass an instantiated model object.
+    Useful for using the function in a loop, see [here](#multiple-function-calls-in-a-loop).
+  - `weights_path`: Same as that in `make_open_nsfw_model`. Ignored if `model` is not `None`.
   - `grad_cam_paths` (`Optional[Sequence[str]]`, default `None`): If not `None`,
     the corresponding Grad-CAM plots for the input images will be saved.
     See the description in `predict_image`.
@@ -215,11 +243,14 @@ End-to-end pipeline function from the input video to predictions.
     If not `None`, e.g., `out.mp4`,
     an output MP4 video with the same frame size and frame rate as
     the input video will be saved via OpenCV. The predicted NSFW probability 
-    is printed on the top-left corner of each frame. Be aware that the output 
+    is printed in the top-left corner of each frame. Be aware that the output 
     file size could be much larger than the input file size.
     This output video is for reference only.
   - `preprocessing`: Same as that in `preprocess_image`.
-  - `weights_path`: Same as that in `make_open_nsfw_model`.
+  - `model` (`Optional[keras.Model]`, default `None`): 
+    Optionally pass an instantiated model object.
+    Useful for using the function in a loop, see [here](#multiple-function-calls-in-a-loop).
+  - `weights_path`: Same as that in `make_open_nsfw_model`. Ignored if `model` is not `None`.
   - `progress_bar` (`bool`, default `True`): Whether to show the progress bar.
 - Return:
   - Tuple of `List[float]`, each with length equals to the number of video frames.
