@@ -10,7 +10,6 @@ from keras_core import backend as keras_backend
 import opennsfw2 as n2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL = n2.make_open_nsfw_model()
 IMAGE_PATHS = [
     os.path.join(BASE_DIR, "test_image_1.jpg"),
     os.path.join(BASE_DIR, "test_image_2.jpg"),
