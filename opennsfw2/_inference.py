@@ -62,7 +62,7 @@ def _predict_images_in_batches(
     for i in range(0, len(images), batch_size):
         batch = np.array(images[i: i + batch_size])
         prediction_batches.append(model_(batch))
-    predictions = np.concatenate(prediction_batches, axis=0)
+    predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
     return predictions
 
 
