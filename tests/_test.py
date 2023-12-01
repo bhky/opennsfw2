@@ -47,7 +47,6 @@ class TestModel(unittest.TestCase):
         predicted_probabilities = n2.predict_images(
             IMAGE_PATHS,
             preprocessing=n2.Preprocessing.YAHOO,
-            model=MODEL,
             grad_cam_paths=grad_cam_paths
         )
         self._assert(
@@ -58,18 +57,18 @@ class TestModel(unittest.TestCase):
     def test_predict_images_simple_preprocessing(self) -> None:
         expected_probabilities = [0.001, 0.913, 0.003]
         predicted_probabilities = n2.predict_images(
-            IMAGE_PATHS, preprocessing=n2.Preprocessing.SIMPLE, model=MODEL
+            IMAGE_PATHS, preprocessing=n2.Preprocessing.SIMPLE
         )
         self._assert(expected_probabilities, predicted_probabilities)
 
     def test_predict_image(self) -> None:
         self.assertAlmostEqual(
-            0.983, n2.predict_image(IMAGE_PATHS[1], model=MODEL), places=3
+            0.983, n2.predict_image(IMAGE_PATHS[1]), places=3
         )
 
     def test_predict_video_frames(self) -> None:
         elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
-            VIDEO_PATH, frame_interval=2, model=MODEL, progress_bar=False
+            VIDEO_PATH, frame_interval=2, progress_bar=False
         )
         self.assertGreater(len(elapsed_seconds), 0)
         self.assertEqual(len(elapsed_seconds), len(nsfw_probabilities))
