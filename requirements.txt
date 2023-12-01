@@ -4,5 +4,5 @@ matplotlib>=3.0.0
 numpy>=1.22.0
 opencv-python>=4.0.0.0
 Pillow>=8.0.0
-scikit-image>=0.18.0
+scikit-image==0.21.0  # Unpin when support for Python 3.8 will be dropped.
 tqdm>=4.62
