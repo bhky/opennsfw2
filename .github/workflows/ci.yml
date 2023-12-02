@@ -11,9 +11,9 @@ jobs:
         backend: [ tensorflow, jax ]
         include:
           - backend: tensorflow
-            package: tensorflow
+            packages: tensorflow
           - backend: jax
-            package: jax[cpu]
+            packages: tensorflow jax[cpu]
     name: python-${{ matrix.python }}-${{ matrix.backend }}
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
         run: |
           python3 -m pip install pylint
           python3 -m pip install mypy
-          python3 -m pip install ${{ matrix.package }}
+          python3 -m pip install ${{ matrix.packages }}
       - name: Test
         run: |
           ./tests/install_from_local_and_test.sh ${{ matrix.backend }}

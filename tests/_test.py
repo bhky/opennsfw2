@@ -5,12 +5,11 @@ import os
 import unittest
 from typing import Optional, Sequence
 
-import keras_core
+from keras_core import backend as keras_backend
 
 import opennsfw2 as n2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL = n2.make_open_nsfw_model()
 IMAGE_PATHS = [
     os.path.join(BASE_DIR, "test_image_1.jpg"),
     os.path.join(BASE_DIR, "test_image_2.jpg"),
@@ -38,7 +37,7 @@ class TestModel(unittest.TestCase):
                 self.assertTrue(os.path.exists(paths[i]))
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        if keras_core.backend.backend() == "tensorflow":
+        if keras_backend.backend() == "tensorflow":
             grad_cam_paths = OUTPUT_GRAD_CAM_PATHS
         else:
             grad_cam_paths = None

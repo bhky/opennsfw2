@@ -9,10 +9,14 @@ import numpy as np
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
 
+from keras_core import KerasTensor, Model  # type: ignore
+
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
 from ._model import make_open_nsfw_model
 from ._typing import NDFloat32Array
+
+global_model: Optional[Model] = None
 
 
 def predict_image(
@@ -28,18 +32,38 @@ def predict_image(
     """
     pil_image = Image.open(image_path)
     image = preprocess_image(pil_image, preprocessing)
-    model = make_open_nsfw_model(weights_path=weights_path)
-    nsfw_probability = float(model(np.expand_dims(image, 0))[0][1])
+    global global_model
+    if global_model is None:
+        global_model = make_open_nsfw_model(weights_path=weights_path)
+    nsfw_probability = float(global_model(np.expand_dims(image, 0))[0][1])
 
     if grad_cam_path is not None:
         # TensorFlow will only be imported here.
         from ._inspection import make_and_save_nsfw_grad_cam
 
         make_and_save_nsfw_grad_cam(
-            pil_image, preprocessing, model, grad_cam_path, alpha
+            pil_image, preprocessing, global_model, grad_cam_path, alpha
         )
 
     return nsfw_probability
+
+
+def _predict_images_in_batches(
+        model_: Model,
+        images: List[NDFloat32Array],
+        batch_size: int
+) -> NDFloat32Array:
+    """
+    It is on purpose not to use `model.predict` because many users would like
+    to use the API in loops. See here:
+    https://keras.io/api/models/model_training_apis/#predict-method
+    """
+    prediction_batches: List[KerasTensor] = []
+    for i in range(0, len(images), batch_size):
+        batch = np.array(images[i: i + batch_size])
+        prediction_batches.append(model_(batch))
+    predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
+    return predictions
 
 
 def predict_images(
@@ -54,12 +78,14 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    images = np.array([
+    images = [
         preprocess_image(Image.open(image_path), preprocessing)
         for image_path in image_paths
-    ])
-    model = make_open_nsfw_model(weights_path=weights_path)
-    predictions = model.predict(images, batch_size=batch_size, verbose=0)
+    ]
+    global global_model
+    if global_model is None:
+        global_model = make_open_nsfw_model(weights_path=weights_path)
+    predictions = _predict_images_in_batches(global_model, images, batch_size)
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
@@ -68,7 +94,7 @@ def predict_images(
 
         for image_path, grad_cam_path in zip(image_paths, grad_cam_paths):
             make_and_save_nsfw_grad_cam(
-                Image.open(image_path), preprocessing, model,
+                Image.open(image_path), preprocessing, global_model,
                 grad_cam_path, alpha
             )
 
@@ -115,7 +141,9 @@ def predict_video_frames(
     cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
-    model = make_open_nsfw_model(weights_path=weights_path)
+    global global_model
+    if global_model is None:
+        global_model = make_open_nsfw_model(weights_path=weights_path)
 
     video_writer: Optional[cv2.VideoWriter] = None  # pylint: disable=no-member
     input_frames: List[NDFloat32Array] = []
@@ -152,12 +180,9 @@ def predict_video_frames(
             input_frames.append(input_frame)
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
-                prediction_batches: List[NDFloat32Array] = []
-                for i in range(0, len(input_frames), batch_size):
-                    batch = np.array(input_frames[i: i + batch_size])
-                    prediction_batches.append(model(batch))
-                predictions = np.concatenate(prediction_batches, axis=0)
-
+                predictions = _predict_images_in_batches(
+                    global_model, input_frames, batch_size
+                )
                 agg_fn = _get_aggregation_fn(aggregation)
                 nsfw_probability = agg_fn(predictions[:, 1])
                 input_frames = []
