@@ -48,10 +48,11 @@ def predict_image(
     return nsfw_probability
 
 
-def _predict_images_in_batches(
+def _predict_from_image_paths_in_batches(
         model_: Model,
-        images: List[NDFloat32Array],
-        batch_size: int
+        image_paths: Sequence[str],
+        batch_size: int,
+        preprocessing: Preprocessing
 ) -> NDFloat32Array:
     """
     It is on purpose not to use `model.predict` because many users would like
@@ -59,9 +60,13 @@ def _predict_images_in_batches(
     https://keras.io/api/models/model_training_apis/#predict-method
     """
     prediction_batches: List[KerasTensor] = []
-    for i in range(0, len(images), batch_size):
-        batch = np.array(images[i: i + batch_size])
-        prediction_batches.append(model_(batch))
+    for i in range(0, len(image_paths), batch_size):
+        path_batch = image_paths[i: i + batch_size]
+        image_batch = [
+            preprocess_image(Image.open(path), preprocessing)
+            for path in path_batch
+        ]
+        prediction_batches.append(model_(np.array(image_batch)))
     predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
     return predictions
 
@@ -78,14 +83,12 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    images = [
-        preprocess_image(Image.open(image_path), preprocessing)
-        for image_path in image_paths
-    ]
     global global_model
     if global_model is None:
         global_model = make_open_nsfw_model(weights_path=weights_path)
-    predictions = _predict_images_in_batches(global_model, images, batch_size)
+    predictions = _predict_from_image_paths_in_batches(
+        global_model, image_paths, batch_size, preprocessing
+    )
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
     if grad_cam_paths is not None:
@@ -122,6 +125,19 @@ def _get_aggregation_fn(
         return float(agg(x))
 
     return fn
+
+
+def _predict_preprocessed_images_in_batches(
+        model_: Model,
+        images: List[NDFloat32Array],
+        batch_size: int
+) -> NDFloat32Array:
+    prediction_batches: List[KerasTensor] = []
+    for i in range(0, len(images), batch_size):
+        batch = np.array(images[i: i + batch_size])
+        prediction_batches.append(model_(batch))
+    predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
+    return predictions
 
 
 def predict_video_frames(
@@ -180,7 +196,7 @@ def predict_video_frames(
             input_frames.append(input_frame)
 
             if frame_count == 1 or len(input_frames) >= aggregation_size:
-                predictions = _predict_images_in_batches(
+                predictions = _predict_preprocessed_images_in_batches(
                     global_model, input_frames, batch_size
                 )
                 agg_fn = _get_aggregation_fn(aggregation)
