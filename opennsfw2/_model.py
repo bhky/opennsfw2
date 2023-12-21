@@ -129,7 +129,8 @@ def _identity_block(
 
 def make_open_nsfw_model(
         input_shape: Tuple[int, int, int] = (224, 224, 3),
-        weights_path: Optional[str] = get_default_weights_path()
+        weights_path: Optional[str] = get_default_weights_path(),
+        name: str = "opennsfw2"
 ) -> Model:
     image_input = layers.Input(shape=input_shape, name="input")
     x = image_input
@@ -191,7 +192,7 @@ def make_open_nsfw_model(
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
     output = layers.Activation("softmax", name="predictions")(logits)
 
-    model = Model(image_input, output)
+    model = Model(image_input, output, name=name)
 
     if weights_path is not None:
         if not os.path.isfile(weights_path):
