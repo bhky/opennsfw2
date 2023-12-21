@@ -38,7 +38,7 @@ def preprocess_image(
         pil_image_resized.save(fh_im, format="JPEG")
         fh_im.seek(0)
 
-        image: NDFloat32Array = skimage.io.imread(
+        image: NDFloat32Array = skimage.io.imread(  # type: ignore
             fh_im, as_gray=False
         ).astype(np.float32)
 
