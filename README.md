@@ -15,10 +15,10 @@ is now discontinued and Caffe is also becoming less popular.
 Please see the description on the Yahoo project page for
 the context, definitions, and model training details.
 
-This **Open-NSFW 2** project provides a Keras Core implementation of the
+This **Open-NSFW 2** project provides a Keras implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
-Note that [Keras Core](https://keras.io/keras_core/) is compatible with 
+Note that **Keras 3** is compatible with 
 TensorFlow, JAX, and PyTorch. However, currently this model is
 only guaranteed to work with TensorFlow and JAX.
 
@@ -90,7 +90,7 @@ video_path = "path/to/your/video.mp4"
 elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
 ```
 
-## Lower level with Keras Core
+## Lower level with Keras
 
 ```python
 import numpy as np
@@ -257,14 +257,14 @@ This implementation provides the following preprocessing options.
 Using 521 private test images, the NSFW probabilities given by 
 three different settings are compared:
 - [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw) with `YAHOO` preprocessing.
-- Keras Core implementation with `YAHOO` preprocessing.
-- Keras Core implementation with `SIMPLE` preprocessing.
+- Keras implementation with `YAHOO` preprocessing.
+- Keras implementation with `SIMPLE` preprocessing.
 
 The following figure shows the result:
 
 ![NSFW probabilities comparison](docs/nsfw_probabilities_comparison.png)
 
-The current Keras Core implementation with `YAHOO` preprocessing
+The current Keras implementation with `YAHOO` preprocessing
 can totally reproduce the well-tested TensorFlow 1 result, 
 with small floating point errors only.
 
