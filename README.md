@@ -147,6 +147,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
     Users can provide path if the default is not preferred. 
     The environment variable `OPENNSFW2_HOME` can also be used to indicate
     where the `.opennsfw2/` directory should be located.
+  - `name` (`str`, default `opennsfw2`): Model name to be used for the Keras model object.
 - Return:
   - `tf.keras.Model` object.
 
