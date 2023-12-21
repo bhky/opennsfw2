@@ -17,6 +17,15 @@ from ._model import make_open_nsfw_model
 from ._typing import NDFloat32Array
 
 global_model: Optional[Model] = None
+global_model_path: Optional[str] = None
+
+
+def _update_global_model_if_needed(weights_path: Optional[str]) -> None:
+    global global_model
+    global global_model_path
+    if global_model is None or weights_path != global_model_path:
+        global_model = make_open_nsfw_model(weights_path=weights_path)
+        global_model_path = weights_path
 
 
 def predict_image(
@@ -32,9 +41,8 @@ def predict_image(
     """
     pil_image = Image.open(image_path)
     image = preprocess_image(pil_image, preprocessing)
-    global global_model
-    if global_model is None:
-        global_model = make_open_nsfw_model(weights_path=weights_path)
+    _update_global_model_if_needed(weights_path)
+    assert global_model is not None
     nsfw_probability = float(global_model(np.expand_dims(image, 0))[0][1])
 
     if grad_cam_path is not None:
@@ -83,9 +91,7 @@ def predict_images(
     Pipeline from image paths to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
-    global global_model
-    if global_model is None:
-        global_model = make_open_nsfw_model(weights_path=weights_path)
+    _update_global_model_if_needed(weights_path)
     predictions = _predict_from_image_paths_in_batches(
         global_model, image_paths, batch_size, preprocessing
     )
@@ -157,9 +163,7 @@ def predict_video_frames(
     cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
-    global global_model
-    if global_model is None:
-        global_model = make_open_nsfw_model(weights_path=weights_path)
+    _update_global_model_if_needed(weights_path)
 
     video_writer: Optional[cv2.VideoWriter] = None  # pylint: disable=no-member
     input_frames: List[NDFloat32Array] = []
