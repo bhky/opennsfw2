@@ -8,7 +8,7 @@ https://github.com/yahoo/open_nsfw
 import os
 from typing import Optional, Tuple
 
-from keras_core import layers, KerasTensor, Model  # type: ignore
+from keras import layers, KerasTensor, Model  # type: ignore
 
 from ._download import get_default_weights_path, download_weights_to
 

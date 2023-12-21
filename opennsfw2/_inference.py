@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
 
-from keras_core import KerasTensor, Model  # type: ignore
+from keras import KerasTensor, Model  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing

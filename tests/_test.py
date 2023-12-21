@@ -5,7 +5,7 @@ import os
 import unittest
 from typing import Optional, Sequence
 
-from keras_core import backend as keras_backend
+from keras import backend as keras_backend
 
 import opennsfw2 as n2
 
