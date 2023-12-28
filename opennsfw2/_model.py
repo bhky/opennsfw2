@@ -6,14 +6,12 @@ https://github.com/mdietrichstein/tensorflow-open_nsfw
 https://github.com/yahoo/open_nsfw
 """
 import os
-from typing import Optional, Tuple, TypeVar
+from typing import Optional, Tuple
 
 from keras import layers, Model  # type: ignore
 
 from ._download import get_default_weights_path, download_weights_to
-
-# Note: Keras 3 has the KerasTensor class but not in Keras 2.
-KerasTensor = TypeVar("KerasTensor")
+from ._typing import KerasTensor
 
 
 def _batch_norm(name: str) -> layers.BatchNormalization:

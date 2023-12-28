@@ -9,12 +9,12 @@ import numpy as np
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
 
-from keras import KerasTensor, Model  # type: ignore
+from keras import Model  # type: ignore
 
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
 from ._model import make_open_nsfw_model
-from ._typing import NDFloat32Array
+from ._typing import KerasTensor, NDFloat32Array
 
 global_model: Optional[Model] = None
 global_model_path: Optional[str] = None
