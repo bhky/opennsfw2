@@ -14,7 +14,7 @@ from keras import Model  # type: ignore
 from ._download import get_default_weights_path
 from ._image import preprocess_image, Preprocessing
 from ._model import make_open_nsfw_model
-from ._typing import KerasTensor, NDFloat32Array
+from ._typing import NDFloat32Array
 
 global_model: Optional[Model] = None
 global_model_path: Optional[str] = None
@@ -67,7 +67,7 @@ def _predict_from_image_paths_in_batches(
     to use the API in loops. See here:
     https://keras.io/api/models/model_training_apis/#predict-method
     """
-    prediction_batches: List[KerasTensor] = []
+    prediction_batches: List[Any] = []
     for i in range(0, len(image_paths), batch_size):
         path_batch = image_paths[i: i + batch_size]
         image_batch = [
@@ -138,7 +138,7 @@ def _predict_preprocessed_images_in_batches(
         images: List[NDFloat32Array],
         batch_size: int
 ) -> NDFloat32Array:
-    prediction_batches: List[KerasTensor] = []
+    prediction_batches: List[Any] = []
     for i in range(0, len(images), batch_size):
         batch = np.array(images[i: i + batch_size])
         prediction_batches.append(model_(batch))
