@@ -6,11 +6,14 @@ https://github.com/mdietrichstein/tensorflow-open_nsfw
 https://github.com/yahoo/open_nsfw
 """
 import os
-from typing import Optional, Tuple
+from typing import Optional, Tuple, TypeVar
 
-from keras import layers, KerasTensor, Model  # type: ignore
+from keras import layers, Model  # type: ignore
 
 from ._download import get_default_weights_path, download_weights_to
+
+# Note: Keras 3 has the KerasTensor class but not in Keras 2.
+KerasTensor = TypeVar("KerasTensor")
 
 
 def _batch_norm(name: str) -> layers.BatchNormalization:
@@ -76,7 +79,7 @@ def _conv_block(
 
     x = layers.Add()([x, shortcut])
 
-    return layers.Activation("relu", name=final_activation_name)(x)
+    return layers.Activation("relu", name=final_activation_name)(x)  # type: ignore
 
 
 def _identity_block(
@@ -124,7 +127,7 @@ def _identity_block(
 
     x = layers.Add()([x, inputs])
 
-    return layers.Activation("relu", name=final_activation_name)(x)
+    return layers.Activation("relu", name=final_activation_name)(x)  # type: ignore
 
 
 def make_open_nsfw_model(
