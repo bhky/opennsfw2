@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the following metadata."
+title: "Open-NSFW 2"
+version: "0.13.7"
+url: "https://github.com/bhky/opennsfw2"
+license: "MIT"
+authors:
+  - family-names: "Yung"
+    given-names: "Bosco"
+    orcid: "https://orcid.org/0000-0002-3776-1589"
+date-released: "2023-12-28"
