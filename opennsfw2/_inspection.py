@@ -6,7 +6,7 @@ from typing import Optional
 import numpy as np
 import tensorflow as tf  # type: ignore # pylint: disable=import-error
 from keras import Model  # type: ignore
-from keras.preprocessing.image import array_to_img  # type: ignore
+from keras.preprocessing.image import array_to_img  # type: ignore # pylint: disable=import-error
 from matplotlib import colormaps as cm
 from PIL import Image  # type: ignore
 
