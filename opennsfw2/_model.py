@@ -188,7 +188,7 @@ def make_open_nsfw_model(
                         nums_filters=(256, 256, 1024),
                         kernel_size=3)
 
-    x = layers.GlobalAveragePooling2D()(x)
+    x = layers.GlobalAveragePooling2D(name="global_average_pooling2d")(x)
 
     logits = layers.Dense(name="fc_nsfw", units=2)(x)
     output = layers.Activation("softmax", name="predictions")(logits)
