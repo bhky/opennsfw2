@@ -17,7 +17,7 @@ class Preprocessing(Enum):
 
 
 def preprocess_image(
-        pil_image: Image,
+        pil_image: Image.Image,
         preprocessing: Preprocessing = Preprocessing.YAHOO
 ) -> NDFloat32Array:
     """

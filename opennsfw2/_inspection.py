@@ -71,7 +71,7 @@ def _resize(
 
 
 def save_grad_cam(
-        pil_image: Image,
+        pil_image: Image.Image,
         heatmap: NDFloat32Array,
         grad_cam_path: str,
         alpha: float
@@ -102,7 +102,7 @@ def save_grad_cam(
 
 
 def make_and_save_nsfw_grad_cam(
-        pil_image: Image,
+        pil_image: Image.Image,
         preprocessing: Preprocessing,
         open_nsfw_model: Model,
         grad_cam_path: str,

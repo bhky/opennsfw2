@@ -124,7 +124,7 @@ sfw_probability, nsfw_probability = predictions[0]
 ### `preprocess_image`
 Apply necessary preprocessing to the input image.
 - Parameters:
-  - `pil_image` (`PIL.Image`): Input as a Pillow image.
+  - `pil_image` (`PIL.Image.Image`): Input as a Pillow image.
   - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`): 
     See [preprocessing details](#preprocessing-details).
 - Return:
