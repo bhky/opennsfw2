@@ -231,8 +231,6 @@ End-to-end pipeline function from the input video to predictions.
 
 # Preprocessing details
 
-## Options
-
 This implementation provides the following preprocessing options.
 - `YAHOO`: The default option which was used in the original 
   [Yahoo's Caffe](https://github.com/yahoo/open_nsfw/blob/master/classify_nsfw.py#L19-L80) 
