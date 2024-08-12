@@ -71,7 +71,7 @@ def _resize(
 
 
 def save_grad_cam(
-        pil_image: Image.Image,
+        image: NDUInt8Array,
         heatmap: NDFloat32Array,
         grad_cam_path: str,
         alpha: float
@@ -92,9 +92,9 @@ def save_grad_cam(
     jet_heatmap = jet_colors[scaled_heatmap]
 
     # Superimpose the heatmap on the input image after resizing.
-    jet_heatmap = _resize(jet_heatmap, pil_image.height, pil_image.width)
+    jet_heatmap = _resize(jet_heatmap, image.shape[0], image.shape[1])
 
-    superimposed_image = jet_heatmap * alpha + np.array(pil_image)
+    superimposed_image = jet_heatmap * alpha + image
     pil_superimposed_image = array_to_img(superimposed_image)
 
     # Save the superimposed image.
@@ -112,4 +112,12 @@ def make_and_save_nsfw_grad_cam(
         preprocess_image(pil_image, preprocessing), open_nsfw_model,
         "activation_stage3_block2", "fc_nsfw", 1
     )
-    save_grad_cam(pil_image, heatmap, grad_cam_path, alpha)
+    if preprocessing == Preprocessing.YAHOO:
+        border_reduction_factor = 224 / 256
+        w, h = pil_image.size
+        w_new, h_new = int(w * border_reduction_factor), int(h * border_reduction_factor)
+        left_new = (w - w_new) // 2
+        upper_new = (h - h_new) // 2
+        pil_image = pil_image.crop((left_new, upper_new, left_new + w_new, upper_new + h_new))
+
+    save_grad_cam(np.array(pil_image), heatmap, grad_cam_path, alpha)
