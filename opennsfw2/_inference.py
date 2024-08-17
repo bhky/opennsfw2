@@ -86,7 +86,7 @@ def _predict_from_image_handles_in_batches(
 
 
 def predict_images(
-        image_handles: Sequence[str],
+        image_handles: Union[Sequence[str], Sequence[Image.Image]],
         batch_size: int = 8,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
