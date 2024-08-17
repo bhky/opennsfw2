@@ -75,10 +75,10 @@ def _predict_from_image_handles_in_batches(
     """
     prediction_batches: List[Any] = []
     for i in range(0, len(image_handles), batch_size):
-        path_batch = image_handles[i: i + batch_size]
+        handle_batch = image_handles[i: i + batch_size]
         image_batch = [
-            preprocess_image(_load_pil_image(path), preprocessing)
-            for path in path_batch
+            preprocess_image(_load_pil_image(handle), preprocessing)
+            for handle in handle_batch
         ]
         prediction_batches.append(model_(np.array(image_batch)))
     predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
