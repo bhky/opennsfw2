@@ -2,7 +2,7 @@
 Inference utilities.
 """
 from enum import auto, Enum
-from typing import Any, Callable, List, Optional, Sequence, Tuple
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import cv2
 import numpy as np
@@ -28,7 +28,7 @@ def _update_global_model_if_needed(weights_path: Optional[str]) -> None:
         global_model_path = weights_path
 
 
-def _load_pil_image(image_handle: str | Image.Image) -> Image.Image:
+def _load_pil_image(image_handle: Union[str, Image.Image]) -> Image.Image:
     if isinstance(image_handle, Image.Image):
         return image_handle
     return Image.open(image_handle)
