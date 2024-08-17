@@ -108,9 +108,9 @@ def predict_images(
         from ._inspection import make_and_save_nsfw_grad_cam
 
         for image_handle, grad_cam_path in zip(image_handles, grad_cam_paths):
+            pil_image = _load_pil_image(image_handle)
             make_and_save_nsfw_grad_cam(
-                _load_pil_image(image_handle), preprocessing, global_model,
-                grad_cam_path, alpha
+                pil_image, preprocessing, global_model, grad_cam_path, alpha
             )
 
     return nsfw_probabilities
