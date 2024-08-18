@@ -2,7 +2,7 @@
 Inference utilities.
 """
 from enum import auto, Enum
-from typing import Any, Callable, List, Optional, Sequence, Tuple
+from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import cv2
 import numpy as np
@@ -28,18 +28,24 @@ def _update_global_model_if_needed(weights_path: Optional[str]) -> None:
         global_model_path = weights_path
 
 
+def _load_pil_image(image_handle: Union[str, Image.Image]) -> Image.Image:
+    if isinstance(image_handle, Image.Image):
+        return image_handle
+    return Image.open(image_handle)
+
+
 def predict_image(
-        image_path: str,
+        image_handle: Union[str, Image.Image],
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
         grad_cam_path: Optional[str] = None,
         alpha: float = 0.8
 ) -> float:
     """
-    Pipeline from single image path to predicted NSFW probability.
+    Pipeline from single image handle to predicted NSFW probability.
     Optionally generate and save the Grad-CAM plot.
     """
-    pil_image = Image.open(image_path)
+    pil_image = _load_pil_image(image_handle)
     image = preprocess_image(pil_image, preprocessing)
     _update_global_model_if_needed(weights_path)
     assert global_model is not None
@@ -56,9 +62,9 @@ def predict_image(
     return nsfw_probability
 
 
-def _predict_from_image_paths_in_batches(
+def _predict_from_image_handles_in_batches(
         model_: Model,
-        image_paths: Sequence[str],
+        image_handles: Union[Sequence[str], Sequence[Image.Image]],
         batch_size: int,
         preprocessing: Preprocessing
 ) -> NDFloat32Array:
@@ -68,11 +74,11 @@ def _predict_from_image_paths_in_batches(
     https://keras.io/api/models/model_training_apis/#predict-method
     """
     prediction_batches: List[Any] = []
-    for i in range(0, len(image_paths), batch_size):
-        path_batch = image_paths[i: i + batch_size]
+    for i in range(0, len(image_handles), batch_size):
+        handle_batch = image_handles[i: i + batch_size]
         image_batch = [
-            preprocess_image(Image.open(path), preprocessing)
-            for path in path_batch
+            preprocess_image(_load_pil_image(handle), preprocessing)
+            for handle in handle_batch
         ]
         prediction_batches.append(model_(np.array(image_batch)))
     predictions: NDFloat32Array = np.concatenate(prediction_batches, axis=0)
@@ -80,7 +86,7 @@ def _predict_from_image_paths_in_batches(
 
 
 def predict_images(
-        image_paths: Sequence[str],
+        image_handles: Union[Sequence[str], Sequence[Image.Image]],
         batch_size: int = 8,
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         weights_path: Optional[str] = get_default_weights_path(),
@@ -88,12 +94,12 @@ def predict_images(
         alpha: float = 0.8
 ) -> List[float]:
     """
-    Pipeline from image paths to predicted NSFW probabilities.
+    Pipeline from image handles to predicted NSFW probabilities.
     Optionally generate and save the Grad-CAM plots.
     """
     _update_global_model_if_needed(weights_path)
-    predictions = _predict_from_image_paths_in_batches(
-        global_model, image_paths, batch_size, preprocessing
+    predictions = _predict_from_image_handles_in_batches(
+        global_model, image_handles, batch_size, preprocessing
     )
     nsfw_probabilities: List[float] = predictions[:, 1].tolist()
 
@@ -101,10 +107,11 @@ def predict_images(
         # TensorFlow will only be imported here.
         from ._inspection import make_and_save_nsfw_grad_cam
 
-        for image_path, grad_cam_path in zip(image_paths, grad_cam_paths):
+        for image_handle, grad_cam_path in zip(image_handles, grad_cam_paths):
+            assert isinstance(image_handle, (str, Image.Image))  # For mypy.
+            pil_image = _load_pil_image(image_handle)
             make_and_save_nsfw_grad_cam(
-                Image.open(image_path), preprocessing, global_model,
-                grad_cam_path, alpha
+                pil_image, preprocessing, global_model, grad_cam_path, alpha
             )
 
     return nsfw_probabilities

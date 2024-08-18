@@ -6,6 +6,7 @@ import unittest
 from typing import Optional, Sequence
 
 from keras import backend as keras_backend
+from PIL import Image
 
 import opennsfw2 as n2
 
@@ -61,8 +62,13 @@ class TestModel(unittest.TestCase):
         self._assert(expected_probabilities, predicted_probabilities)
 
     def test_predict_image(self) -> None:
+        # From path.
         self.assertAlmostEqual(
             0.983, n2.predict_image(IMAGE_PATHS[1]), places=3
+        )
+        # From PIL Image.
+        self.assertAlmostEqual(
+            0.983, n2.predict_image(Image.open(IMAGE_PATHS[1])), places=3
         )
 
     def test_predict_video_frames(self) -> None:

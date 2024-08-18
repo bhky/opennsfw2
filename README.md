@@ -61,21 +61,23 @@ For more details, please refer to the [API](#api) section.
 ```python
 import opennsfw2 as n2
 
-# To get the NSFW probability of a single image.
-image_path = "path/to/your/image.jpg"
+# To get the NSFW probability of a single image, provide your image file path,
+# or a `PIL.Image.Image` object.
+image_handle = "path/to/your/image.jpg"
 
-nsfw_probability = n2.predict_image(image_path)
+nsfw_probability = n2.predict_image(image_handle)
 
-# To get the NSFW probabilities of a list of images.
-# This is better than looping with `predict_image` as the model will only be instantiated once
-# and batching is used during inference.
-image_paths = [
+# To get the NSFW probabilities of a list of images, provide a list of file paths,
+# or a list of `PIL.Image.Image` objects.
+# Using this function is better than looping with `predict_image` as the model 
+# will only be instantiated once and batching is done during inference.
+image_handles = [
   "path/to/your/image1.jpg",
   "path/to/your/image2.jpg",
   # ...
 ]
 
-nsfw_probabilities = n2.predict_images(image_paths)
+nsfw_probabilities = n2.predict_images(image_handles)
 ```
 
 ## Video
@@ -154,8 +156,8 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
 ### `predict_image`
 End-to-end pipeline function from the input image to the predicted NSFW probability.
 - Parameters:
-  - `image_path` (`str`): Path to the input image file. 
-    The image format must be supported by Pillow.
+  - `image_handle` (`Union[str, PIL.Image.Image]`):
+    Path to the input image file with a format supported by Pillow, or a `PIL.Image.Image` object.
   - `preprocessing`: Same as that in `preprocess_image`.
   - `weights_path`: Same as that in `make_open_nsfw_model`.
   - `grad_cam_path` (`Optional[str]`, default `None`): If not `None`, e.g., `cam.jpg`,
@@ -171,8 +173,9 @@ End-to-end pipeline function from the input image to the predicted NSFW probabil
 ### `predict_images`
 End-to-end pipeline function from the input images to the predicted NSFW probabilities.
 - Parameters:
-  - `image_paths` (`Sequence[str]`): List of paths to the input image files. 
-    The image format must be supported by Pillow.
+  - `image_handles` (`Union[Sequence[str], Sequence[PIL.Image.Image]]`):
+    List of paths to the input image files with formats supported by Pillow,
+    or list of `PIL.Image.Image` objects.
   - `batch_size` (`int`, default `8`): Batch size to be used for model inference. 
     Choose a value that works the best with your device resources.
   - `preprocessing`: Same as that in `preprocess_image`.
