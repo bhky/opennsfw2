@@ -26,7 +26,7 @@ A simple API is provided for making predictions on images and videos.
 
 # Installation
 
-Tested with TensorFlow and JAX, for Python 3.9, 3.10, and 3.11.
+Tested with TensorFlow and JAX, for Python 3.9 to 3.12.
 
 A note on PyTorch:
 
