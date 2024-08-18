@@ -61,16 +61,18 @@ For more details, please refer to the [API](#api) section.
 ```python
 import opennsfw2 as n2
 
-# To get the NSFW probability of a single image.
-image_handle = "path/to/your/image.jpg"  # Alternatively, a `PIL.Image.Image` object.
+# To get the NSFW probability of a single image, provide your image file path,
+# or a `PIL.Image.Image` object.
+image_handle = "path/to/your/image.jpg"
 
 nsfw_probability = n2.predict_image(image_handle)
 
-# To get the NSFW probabilities of a list of images.
-# This is better than looping with `predict_image` as the model will only be instantiated once
-# and batching is used during inference.
+# To get the NSFW probabilities of a list of images, provide a list of file paths,
+# or a list of `PIL.Image.Image` objects.
+# Using this function is better than looping with `predict_image` as the model 
+# will only be instantiated once and batching is done during inference.
 image_handles = [
-  "path/to/your/image1.jpg",  # Alternatively, a list of `PIL.Image.Image` objects.
+  "path/to/your/image1.jpg",
   "path/to/your/image2.jpg",
   # ...
 ]
