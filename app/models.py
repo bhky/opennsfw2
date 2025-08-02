@@ -81,7 +81,9 @@ class MultipleImagesRequest(BaseModel):
     )
 
     @validator('inputs')
+    @classmethod
     def inputs_not_empty(cls, v: List[InputData]) -> List[InputData]:
+        """Validate that inputs list is not empty."""
         if not v:
             raise ValueError('inputs cannot be empty')
         return v
@@ -136,4 +138,4 @@ class ErrorResponse(BaseModel):
     """Error response model."""
     success: bool = Field(False, description="Success status")
     error: str = Field(..., description="Error message")
-    detail: Optional[str] = Field(None, description="Detailed error information") 
+    detail: Optional[str] = Field(None, description="Detailed error information")

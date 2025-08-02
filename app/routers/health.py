@@ -24,7 +24,7 @@ async def model_health() -> Dict[str, Any]:
     try:
         from ..services.prediction_service import PredictionService
         service = PredictionService()
-        
+
         return {
             "status": "healthy",
             "model_loaded": service.is_model_loaded(),
@@ -35,4 +35,4 @@ async def model_health() -> Dict[str, Any]:
             "status": "unhealthy",
             "model_loaded": False,
             "error": str(e)
-        } 
+        }
