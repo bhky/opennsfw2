@@ -13,14 +13,14 @@ def test_health_endpoints(base_url: str = "http://localhost:8000") -> None:
     """Test health check endpoints."""
     print("Testing health endpoints...")
     
-    # Basic health check
+    # Basic health check.
     response = requests.get(f"{base_url}/health/")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
     print("✓ Basic health check passed")
     
-    # Model health check
+    # Model health check.
     response = requests.get(f"{base_url}/health/model")
     assert response.status_code == 200
     data = response.json()
@@ -124,7 +124,7 @@ def test_error_handling(base_url: str = "http://localhost:8000") -> None:
     }
     
     response = requests.post(f"{base_url}/predict/images", json=payload)
-    assert response.status_code == 422  # Validation error
+    assert response.status_code == 422  # Validation error.
     print("✓ Empty inputs validation passed")
 
 
@@ -151,10 +151,10 @@ def run_all_tests(base_url: str = "http://localhost:8000") -> None:
         test_error_handling(base_url)
         
         print("=" * 50)
-        print("✅ All tests passed!")
+        print("All tests passed!")
         
     except Exception as e:
-        print(f"❌ Test failed: {e}")
+        print(f"Test failed: {e}")
         raise
 
 
