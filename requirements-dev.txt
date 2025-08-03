@@ -3,4 +3,4 @@
 pylint>=2.15.0
 mypy>=1.0.0
 opencv-stubs>=0.1.0
-matplotlib-stubs>=1.2.0 
+matplotlib-stubs>=0.3.0 
