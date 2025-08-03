@@ -30,7 +30,7 @@ async def model_health() -> Dict[str, Any]:
         return {
             "status": "healthy",
             "model_loaded": service.is_model_loaded(),
-            "model_version": opennsfw2.__version__
+            "version": opennsfw2.__version__
         }
     except Exception as e:
         return {

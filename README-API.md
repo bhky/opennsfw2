@@ -178,10 +178,11 @@ print(f"NSFW probability: {result['result']['nsfw_probability']}")
 - `aggregation`: Aggregation method - `MEAN`, `MEDIAN`, `MAX`, `MIN` (default: `MEAN`)
 
 ### Response Format
-All responses include:
+
+All successful responses include:
 - `success`: Boolean indicating success
 - `processing_time_ms`: Processing time in milliseconds
-- `model_version`: OpenNSFW2 version
+- `version`: OpenNSFW2 package version
 
 For images:
 ```json
@@ -192,7 +193,7 @@ For images:
     "sfw_probability": 0.15
   },
   "processing_time_ms": 245.5,
-  "model_version": "<version>"
+  "version": "<version>"
 }
 ```
 
@@ -205,7 +206,7 @@ For videos:
     "nsfw_probabilities": [0.1, 0.15, 0.8, ...]
   },
   "processing_time_ms": 15000.0,
-  "model_version": "<version>"
+  "version": "<version>"
 }
 ```
 

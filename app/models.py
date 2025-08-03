@@ -8,19 +8,16 @@ from pydantic import BaseModel, Field, validator
 
 
 class InputType(str, Enum):
-    """Supported input types."""
     URL = "url"
     BASE64 = "base64"
 
 
 class PreprocessingType(str, Enum):
-    """Preprocessing options."""
     YAHOO = "YAHOO"
     SIMPLE = "SIMPLE"
 
 
 class AggregationType(str, Enum):
-    """Video aggregation methods."""
     MEAN = "MEAN"
     MEDIAN = "MEDIAN"
     MAX = "MAX"
@@ -28,16 +25,15 @@ class AggregationType(str, Enum):
 
 
 class InputData(BaseModel):
-    """Input data specification."""
     type: InputType = Field(..., description="Type of input data")
-    data: str = Field(..., description="URL or base64 encoded data")
+    data: str = Field(..., description="URL or base64 data")
 
 
 class ImageOptions(BaseModel):
     """Options for image prediction."""
     preprocessing: PreprocessingType = Field(
         default=PreprocessingType.YAHOO,
-        description="Preprocessing method to use"
+        description="Preprocessing method"
     )
 
 
@@ -45,7 +41,7 @@ class VideoOptions(BaseModel):
     """Options for video prediction."""
     preprocessing: PreprocessingType = Field(
         default=PreprocessingType.YAHOO,
-        description="Preprocessing method to use"
+        description="Preprocessing method"
     )
     frame_interval: int = Field(
         default=8,
@@ -99,43 +95,40 @@ class VideoRequest(BaseModel):
 
 
 class PredictionResult(BaseModel):
-    """Single prediction result."""
     nsfw_probability: float = Field(..., description="NSFW probability")
     sfw_probability: float = Field(..., description="SFW probability")
 
 
+class VideoResult(BaseModel):
+    """Result model for video prediction."""
+    elapsed_seconds: List[float] = Field(..., description="Elapsed seconds for each frame")
+    nsfw_probabilities: List[float] = Field(..., description="NSFW probabilities for each frame")
+
+
 class SingleImageResponse(BaseModel):
     """Response model for single image prediction."""
-    success: bool = Field(True, description="Success status")
+    success: bool = Field(..., description="Whether the prediction was successful")
     result: PredictionResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
-    model_version: str = Field(..., description="Model version")
+    version: str = Field(..., description="OpenNSFW2 package version")
 
 
 class MultipleImagesResponse(BaseModel):
     """Response model for multiple images prediction."""
-    success: bool = Field(True, description="Success status")
+    success: bool = Field(..., description="Whether the prediction was successful")
     results: List[PredictionResult] = Field(..., description="Prediction results")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
-    model_version: str = Field(..., description="Model version")
-
-
-class VideoResult(BaseModel):
-    """Video prediction result."""
-    elapsed_seconds: List[float] = Field(..., description="Elapsed time for each frame")
-    nsfw_probabilities: List[float] = Field(..., description="NSFW probability for each frame")
+    version: str = Field(..., description="OpenNSFW2 package version")
 
 
 class VideoResponse(BaseModel):
     """Response model for video prediction."""
-    success: bool = Field(True, description="Success status")
-    result: VideoResult = Field(..., description="Video prediction result")
+    success: bool = Field(..., description="Whether the prediction was successful")
+    result: VideoResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
-    model_version: str = Field(..., description="Model version")
+    version: str = Field(..., description="OpenNSFW2 package version")
 
 
 class ErrorResponse(BaseModel):
     """Error response model."""
-    success: bool = Field(False, description="Success status")
-    error: str = Field(..., description="Error message")
-    detail: Optional[str] = Field(None, description="Detailed error information")
+    detail: str = Field(..., description="Error message")

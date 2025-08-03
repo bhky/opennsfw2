@@ -61,7 +61,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
                 sfw_probability=sfw_prob
             ),
             processing_time_ms=processing_time,
-            model_version=opennsfw2.__version__
+            version=opennsfw2.__version__
         )
 
     except InvalidInputError as e:
@@ -129,7 +129,7 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
             success=True,
             results=results,
             processing_time_ms=processing_time,
-            model_version=opennsfw2.__version__
+            version=opennsfw2.__version__
         )
 
     except InvalidInputError as e:
@@ -186,7 +186,7 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
                 nsfw_probabilities=nsfw_probabilities
             ),
             processing_time_ms=processing_time,
-            model_version=opennsfw2.__version__
+            version=opennsfw2.__version__
         )
 
     except InvalidInputError as e:
