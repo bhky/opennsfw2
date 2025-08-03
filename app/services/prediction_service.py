@@ -13,12 +13,12 @@ from ..pydantic_models import PreprocessingType, AggregationType
 class PredictionService:
     """Singleton service for managing the NSFW model and predictions."""
 
-    _instance: Optional['PredictionService'] = None
+    _instance: Optional["PredictionService"] = None
     _lock = Lock()
     _model: Optional[object] = None
     _model_loaded: bool = False
 
-    def __new__(cls) -> 'PredictionService':
+    def __new__(cls) -> "PredictionService":
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:

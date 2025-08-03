@@ -72,12 +72,12 @@ class MultipleImagesRequest(BaseModel):
         description="Prediction options"
     )
 
-    @validator('inputs')
+    @validator("inputs")
     @classmethod
     def inputs_not_empty(cls, v: List[InputData]) -> List[InputData]:
         """Validate that inputs list is not empty."""
         if not v:
-            raise ValueError('inputs cannot be empty')
+            raise ValueError("inputs cannot be empty")
         return v
 
 

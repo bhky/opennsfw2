@@ -64,7 +64,7 @@ class FileService:
             response.raise_for_status()
 
             # Check content length if available.
-            content_length = response.headers.get('content-length')
+            content_length = response.headers.get("content-length")
             if content_length and int(content_length) > 100 * 1024 * 1024:  # 100MB limit
                 raise DownloadError("File too large (>100MB)")
 

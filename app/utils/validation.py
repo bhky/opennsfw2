@@ -27,7 +27,7 @@ def validate_url(url: str) -> None:
         if not all([result.scheme, result.netloc]):
             raise InvalidInputError("URL must have scheme and netloc")
 
-        if result.scheme not in ('http', 'https'):
+        if result.scheme not in ("http", "https"):
             raise InvalidInputError("URL must use http or https scheme")
 
     except Exception as e:
