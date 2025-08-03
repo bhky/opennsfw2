@@ -192,7 +192,7 @@ For images:
     "sfw_probability": 0.15
   },
   "processing_time_ms": 245.5,
-  "model_version": "0.14.0"
+  "model_version": "<version>"
 }
 ```
 
@@ -205,7 +205,7 @@ For videos:
     "nsfw_probabilities": [0.1, 0.15, 0.8, ...]
   },
   "processing_time_ms": 15000.0,
-  "model_version": "0.14.0"
+  "model_version": "<version>"
 }
 ```
 
