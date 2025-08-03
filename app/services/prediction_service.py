@@ -1,5 +1,5 @@
 """
-Prediction service for managing model and making predictions.
+Prediction service for OpenNSFW2 model.
 """
 from typing import List, Optional, Tuple, Union, Sequence
 from threading import Lock
@@ -7,7 +7,7 @@ from threading import Lock
 from PIL import Image
 import opennsfw2 as n2
 
-from ..models import PreprocessingType, AggregationType
+from ..pydantic_models import PreprocessingType, AggregationType
 
 
 class PredictionService:

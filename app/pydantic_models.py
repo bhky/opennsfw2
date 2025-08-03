@@ -30,7 +30,6 @@ class InputData(BaseModel):
 
 
 class ImageOptions(BaseModel):
-    """Options for image prediction."""
     preprocessing: PreprocessingType = Field(
         default=PreprocessingType.YAHOO,
         description="Preprocessing method"
@@ -38,7 +37,6 @@ class ImageOptions(BaseModel):
 
 
 class VideoOptions(BaseModel):
-    """Options for video prediction."""
     preprocessing: PreprocessingType = Field(
         default=PreprocessingType.YAHOO,
         description="Preprocessing method"
@@ -60,7 +58,6 @@ class VideoOptions(BaseModel):
 
 
 class SingleImageRequest(BaseModel):
-    """Request model for single image prediction."""
     input: InputData = Field(..., description="Input image data")
     options: Optional[ImageOptions] = Field(
         default_factory=ImageOptions,
@@ -69,7 +66,6 @@ class SingleImageRequest(BaseModel):
 
 
 class MultipleImagesRequest(BaseModel):
-    """Request model for multiple images prediction."""
     inputs: List[InputData] = Field(..., description="List of input image data")
     options: Optional[ImageOptions] = Field(
         default_factory=ImageOptions,
@@ -86,7 +82,6 @@ class MultipleImagesRequest(BaseModel):
 
 
 class VideoRequest(BaseModel):
-    """Request model for video prediction."""
     input: InputData = Field(..., description="Input video data")
     options: Optional[VideoOptions] = Field(
         default_factory=VideoOptions,
@@ -100,13 +95,11 @@ class PredictionResult(BaseModel):
 
 
 class VideoResult(BaseModel):
-    """Result model for video prediction."""
     elapsed_seconds: List[float] = Field(..., description="Elapsed seconds for each frame")
     nsfw_probabilities: List[float] = Field(..., description="NSFW probabilities for each frame")
 
 
 class SingleImageResponse(BaseModel):
-    """Response model for single image prediction."""
     success: bool = Field(..., description="Whether the prediction was successful")
     result: PredictionResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
@@ -114,7 +107,6 @@ class SingleImageResponse(BaseModel):
 
 
 class MultipleImagesResponse(BaseModel):
-    """Response model for multiple images prediction."""
     success: bool = Field(..., description="Whether the prediction was successful")
     results: List[PredictionResult] = Field(..., description="Prediction results")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
@@ -122,7 +114,6 @@ class MultipleImagesResponse(BaseModel):
 
 
 class VideoResponse(BaseModel):
-    """Response model for video prediction."""
     success: bool = Field(..., description="Whether the prediction was successful")
     result: VideoResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
@@ -130,5 +121,4 @@ class VideoResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Error response model."""
     detail: str = Field(..., description="Error message")

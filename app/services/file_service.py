@@ -13,7 +13,7 @@ import requests
 from PIL import Image
 
 import opennsfw2
-from ..models import InputType, InputData
+from ..pydantic_models import InputType, InputData
 from ..utils.exceptions import InvalidInputError, DownloadError
 
 

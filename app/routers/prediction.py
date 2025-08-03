@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, status
 from PIL import Image
 
 import opennsfw2
-from ..models import (
+from ..pydantic_models import (
     SingleImageRequest, SingleImageResponse, 
     MultipleImagesRequest, MultipleImagesResponse,
     VideoRequest, VideoResponse,

@@ -1,11 +1,12 @@
 """
-Validation utilities.
+Input validation utilities.
 """
+import base64
 from typing import List
 from urllib.parse import urlparse
 
-from ..models import InputData, InputType
-from .exceptions import InvalidInputError
+from ..pydantic_models import InputData, InputType
+from ..utils.exceptions import InvalidInputError
 
 
 def validate_url(url: str) -> None:
@@ -51,7 +52,6 @@ def validate_base64(data: str) -> None:
         raise InvalidInputError("Base64 data length must be multiple of 4")
 
     # Check for invalid characters.
-    import base64
     try:
         base64.b64decode(data, validate=True)
     except Exception as e:
