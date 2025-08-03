@@ -167,7 +167,7 @@ def predict_video_frames(
     """
     Make prediction for each video frame.
     """
-    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
+    cap = cv2.VideoCapture(video_path)  # type: ignore[call-arg]  # pylint: disable=no-member
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     _update_global_model_if_needed(weights_path)
