@@ -5,6 +5,8 @@ from typing import Dict, Any
 
 from fastapi import APIRouter
 
+import opennsfw2
+
 router = APIRouter()
 
 
@@ -14,7 +16,7 @@ async def health_check() -> Dict[str, Any]:
     return {
         "status": "healthy",
         "service": "OpenNSFW2 API",
-        "version": "0.14.0"
+        "version": opennsfw2.__version__
     }
 
 
@@ -28,7 +30,7 @@ async def model_health() -> Dict[str, Any]:
         return {
             "status": "healthy",
             "model_loaded": service.is_model_loaded(),
-            "model_version": "0.14.0"
+            "model_version": opennsfw2.__version__
         }
     except Exception as e:
         return {

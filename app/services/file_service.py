@@ -12,6 +12,7 @@ import requests
 
 from PIL import Image
 
+import opennsfw2
 from ..models import InputType, InputData
 from ..utils.exceptions import InvalidInputError, DownloadError
 
@@ -57,7 +58,7 @@ class FileService:
 
         try:
             headers = {
-                'User-Agent': 'OpenNSFW2-API/0.14.0'
+                "User-Agent": f"OpenNSFW2-API/{opennsfw2.__version__}"
             }
             response = requests.get(url, timeout=timeout, headers=headers, stream=True)
             response.raise_for_status()

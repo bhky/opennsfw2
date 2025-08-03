@@ -4,12 +4,13 @@ FastAPI application for OpenNSFW2 HTTP service.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import opennsfw2
 from .routers import health, prediction
 
 app = FastAPI(
     title="OpenNSFW2 API",
     description="HTTP API for NSFW content detection using OpenNSFW2",
-    version="0.14.0",
+    version=opennsfw2.__version__,
     docs_url="/docs",
     redoc_url="/redoc",
 )
