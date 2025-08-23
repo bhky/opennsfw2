@@ -55,9 +55,6 @@ def preprocess_image(
         )
         image = np.array(pil_image_resized).astype(np.float32)
 
-    else:
-        raise ValueError("Invalid preprocessing option.")
-
     # RGB to BGR
     image = image[:, :, ::-1]
 
