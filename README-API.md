@@ -6,24 +6,13 @@ A FastAPI-based HTTP service for NSFW content detection using the OpenNSFW2 libr
 
 ### Using Docker (Recommended)
 
-#### CPU Version
 ```bash
 # Build and run
 docker build -t opennsfw2-api .
 docker run -p 8000:8000 opennsfw2-api
 
 # Or use docker-compose
-docker-compose up opennsfw2-api-cpu
-```
-
-#### GPU Version (requires NVIDIA Docker)
-```bash
-# Build and run
-docker build -f Dockerfile.gpu -t opennsfw2-api-gpu .
-docker run --gpus all -p 8000:8000 opennsfw2-api-gpu
-
-# Or use docker-compose
-docker-compose --profile gpu up opennsfw2-api-gpu
+docker-compose up opennsfw2-api
 ```
 
 ### Direct Installation
@@ -233,69 +222,3 @@ Error response format:
 - Maximum file size: 100MB
 - Supported image formats: JPEG, PNG, GIF, BMP, TIFF (via Pillow)
 - Supported video formats: MP4, AVI, MOV, etc. (via OpenCV)
-
-## Performance Notes
-
-### CPU vs GPU
-- **CPU**: Works on any system, slower inference
-- **GPU**: Requires NVIDIA GPU with CUDA support, faster inference
-
-### Optimization Tips
-- Use batch endpoints (`/predict/images`) for multiple images
-- Consider using `SIMPLE` preprocessing for slightly faster processing
-- For videos, adjust `frame_interval` and `aggregation_size` based on your needs
-
-### Memory Usage
-- Model requires ~200MB of RAM when loaded
-- Additional memory needed for processing depends on input size
-- Video processing requires temporary disk space
-
-## Docker Configuration
-
-### CPU Dockerfile
-```dockerfile
-# Uses python:3.11-slim base image
-# Installs OpenCV and other system dependencies
-# Pre-downloads model weights during build
-# Runs as non-root user
-```
-
-### GPU Dockerfile  
-```dockerfile
-# Uses nvidia/cuda:11.8-runtime-ubuntu22.04 base image
-# Installs TensorFlow GPU and CUDA dependencies
-# Pre-downloads model weights during build
-# Runs as non-root user
-```
-
-### Build Arguments
-Both Dockerfiles support standard Docker build arguments and can be customized as needed.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Model download fails during Docker build**
-   - Check internet connection
-   - Model will be downloaded at runtime if build fails
-
-2. **GPU not detected**
-   - Ensure NVIDIA Docker is installed
-   - Check `nvidia-smi` works in container
-   - Verify GPU is passed to container with `--gpus all`
-
-3. **Out of memory errors**
-   - Reduce batch size for multiple images
-   - Use CPU version if GPU memory is limited
-   - For videos, increase `frame_interval` to process fewer frames
-
-4. **Slow processing**
-   - Use GPU version if available
-   - Consider using `SIMPLE` preprocessing
-   - For videos, adjust `frame_interval` and `aggregation_size`
-
-### Logs
-Check container logs for detailed error information:
-```bash
-docker logs <container-name>
-``` 
