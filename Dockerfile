@@ -1,22 +1,12 @@
-FROM python:3.11-slim
+FROM python:3.12-slim-bookworm
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+RUN rm -f /etc/apt/apt.conf.d/docker-clean
 
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+# libGL is needed to avoid "ImportError: libGL.so.1" in OpenCV
+# libglib2.0-0 is needed to avoid "ImportError: libgthread-2.0.so.0" in OpenCV
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
-    libgstreamer1.0-0 \
-    libgstreamer-plugins-base1.0-0 \
-    libgtk-3-0 \
-    libavcodec58 \
-    libavformat58 \
-    libswscale5 \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

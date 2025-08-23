@@ -1,14 +1,14 @@
 FROM nvidia/cuda:11.8-runtime-ubuntu22.04
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
+
+RUN rm -f /etc/apt/apt.conf.d/docker-clean
 
 RUN apt-get update && apt-get install -y \
     python3.11 \
     python3.11-distutils \
     python3-pip \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
