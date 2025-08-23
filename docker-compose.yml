@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  opennsfw2-api-cpu:
+  opennsfw2-api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,33 +17,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  opennsfw2-api-gpu:
-    build:
-      context: .
-      dockerfile: Dockerfile.gpu
-    ports:
-      - "8001:8000"
-    environment:
-      - OPENNSFW2_HOME=/app/.opennsfw2
-      - NVIDIA_VISIBLE_DEVICES=all
-    volumes:
-      - model_weights:/app/.opennsfw2
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    profiles:
-      - gpu
 
 volumes:
   model_weights: 
