@@ -1,5 +1,5 @@
-# Development/CI dependencies
-# These are for code quality checks and type checking only
+# Development/CI dependencies.
+# These are for code quality checks and type checking only.
 pylint>=2.15.0
 mypy>=1.0.0
 opencv-stubs>=0.1.0
