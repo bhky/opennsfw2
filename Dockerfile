@@ -18,13 +18,14 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the entire project.
 COPY . .
 
-# Pre-download model weights to avoid download during runtime.
-RUN python -c "import opennsfw2; opennsfw2.make_open_nsfw_model()" || echo "Model download failed, will retry at runtime"
-
 # Create non-root user.
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app
 USER appuser
+
+# Pre-download model weights to avoid download during runtime.
+# Weights path: /home/appuser/.opennsfw2/weights/open_nsfw_weights.h5
+RUN python -c "import opennsfw2; opennsfw2.make_open_nsfw_model()" || echo "Model download failed, will retry at runtime"
 
 EXPOSE 8000
 
