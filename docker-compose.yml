@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   opennsfw2-api:
@@ -19,4 +19,4 @@ services:
       start_period: 40s
 
 volumes:
-  model_weights: 
+  model_weights:
