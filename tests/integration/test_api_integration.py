@@ -16,7 +16,7 @@ def test_health_endpoints(base_url: str = "http://localhost:8000") -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
-    print("✓ Basic health check passed")
+    print("Basic health check passed.")
     
     # Model health check.
     response = requests.get(f"{base_url}/health/model")
@@ -24,7 +24,7 @@ def test_health_endpoints(base_url: str = "http://localhost:8000") -> None:
     data = response.json()
     assert data["status"] == "healthy"
     assert data["model_loaded"] is True
-    print("✓ Model health check passed")
+    print("Model health check passed.")
 
 
 def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> None:
@@ -57,7 +57,7 @@ def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> Non
     assert 0 <= data["result"]["sfw_probability"] <= 1
     assert abs(data["result"]["nsfw_probability"] + data["result"]["sfw_probability"] - 1.0) < 0.001
     
-    print(f"✓ Image prediction passed - NSFW: {data['result']['nsfw_probability']:.3f}")
+    print(f"Image prediction passed - NSFW: {data['result']['nsfw_probability']:.3f}")
 
 
 def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> None:
@@ -97,7 +97,7 @@ def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> 
         assert "sfw_probability" in result
         assert 0 <= result["nsfw_probability"] <= 1
         assert 0 <= result["sfw_probability"] <= 1
-        print(f"✓ Image {i+1} prediction - NSFW: {result['nsfw_probability']:.3f}")
+        print(f"Image {i+1} prediction - NSFW: {result['nsfw_probability']:.3f}")
 
 
 def test_error_handling(base_url: str = "http://localhost:8000") -> None:
@@ -114,7 +114,7 @@ def test_error_handling(base_url: str = "http://localhost:8000") -> None:
     
     response = requests.post(f"{base_url}/predict/image", json=payload)
     assert response.status_code == 400
-    print("✓ Invalid base64 handling passed")
+    print("Invalid base64 handling passed.")
     
     # Test empty inputs list.
     payload = {
@@ -123,16 +123,15 @@ def test_error_handling(base_url: str = "http://localhost:8000") -> None:
     
     response = requests.post(f"{base_url}/predict/images", json=payload)
     assert response.status_code == 422  # Validation error.
-    print("✓ Empty inputs validation passed")
+    print("Empty inputs validation passed.")
 
 
 def run_all_tests(base_url: str = "http://localhost:8000") -> None:
     """Run all tests."""
-    print(f"Running API tests against {base_url}")
+    print(f"Running API tests against: {base_url}")
     print("=" * 50)
     
     try:
-        # Wait for server to be ready.
         print("Waiting for server to be ready...")
         for _ in range(30):  # Wait up to 30 seconds.
             try:
@@ -141,7 +140,7 @@ def run_all_tests(base_url: str = "http://localhost:8000") -> None:
             except requests.exceptions.RequestException:
                 time.sleep(1)
         else:
-            raise Exception("Server not ready after 30 seconds")
+            raise Exception("Server not ready after 30 seconds.")
             
         test_health_endpoints(base_url)
         test_image_prediction_base64(base_url)
@@ -149,7 +148,7 @@ def run_all_tests(base_url: str = "http://localhost:8000") -> None:
         test_error_handling(base_url)
         
         print("=" * 50)
-        print("All tests passed!")
+        print("All tests passed.")
         
     except Exception as e:
         print(f"Test failed: {e}")
