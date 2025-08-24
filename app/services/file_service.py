@@ -147,8 +147,6 @@ class FileService:
             content = FileService.download_from_url(input_data.data)
         elif input_data.type == InputType.BASE64:
             content = FileService.decode_base64(input_data.data)
-        else:
-            raise InvalidInputError(f"Unsupported input type: {input_data.type}")
 
         # Try to open as image first.
         try:
@@ -177,8 +175,6 @@ class FileService:
             content = FileService.download_from_url(input_data.data)
         elif input_data.type == InputType.BASE64:
             content = FileService.decode_base64(input_data.data)
-        else:
-            raise InvalidInputError(f"Unsupported input type: {input_data.type}")
 
         # Use generic suffix for video files.
         with FileService.get_temp_file(content, suffix=".mp4") as temp_path:
