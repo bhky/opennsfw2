@@ -4,9 +4,7 @@ Simple test script for the OpenNSFW2 API.
 Run this after starting the API server to verify it works correctly.
 """
 import requests
-import base64
 import time
-from typing import Dict, Any
 
 
 def test_health_endpoints(base_url: str = "http://localhost:8000") -> None:
@@ -158,8 +156,12 @@ def run_all_tests(base_url: str = "http://localhost:8000") -> None:
         raise
 
 
-if __name__ == "__main__":
+def main() -> None:
     import sys
     
     base_url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8000"
-    run_all_tests(base_url) 
+    run_all_tests(base_url)
+
+
+if __name__ == "__main__":
+    main()
