@@ -35,23 +35,18 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
     start_time = time.time()
 
     try:
-        # Get prediction service.
         service = PredictionService()
 
-        # Process input data.
         processed_input = FileService.process_input_data(request.input)
 
-        # Ensure it's an image.
         if not isinstance(processed_input, Image.Image):
-            raise InvalidInputError("Input is not a valid image")
+            raise InvalidInputError("Input is not a valid image.")
 
-        # Get prediction.
         sfw_prob, nsfw_prob = service.predict_image(
             processed_input,
             preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO
         )
 
-        # Calculate processing time.
         processing_time = (time.time() - start_time) * 1000
 
         return SingleImageResponse(
@@ -94,27 +89,22 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
     start_time = time.time()
 
     try:
-        # Get prediction service.
         service = PredictionService()
 
-        # Process all input data.
         processed_inputs: List[Image.Image] = []
         for input_data in request.inputs:
             processed_input = FileService.process_input_data(input_data)
 
-            # Ensure it's an image.
             if not isinstance(processed_input, Image.Image):
                 raise InvalidInputError(f"Input {input_data.data[:50]}... is not a valid image")
 
             processed_inputs.append(processed_input)
 
-        # Get predictions.
         predictions = service.predict_images(
             processed_inputs,
             preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO
         )
 
-        # Convert to results.
         results = []
         for sfw_prob, nsfw_prob in predictions:
             results.append(PredictionResult(
@@ -122,7 +112,6 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
                 sfw_probability=sfw_prob
             ))
 
-        # Calculate processing time.
         processing_time = (time.time() - start_time) * 1000
 
         return MultipleImagesResponse(
@@ -162,12 +151,10 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
     start_time = time.time()
 
     try:
-        # Get prediction service.
         service = PredictionService()
 
         # Process video input and get temporary file.
         with FileService.process_video_input(request.input) as video_path:
-            # Get predictions.
             elapsed_seconds, nsfw_probabilities = service.predict_video(
                 video_path,
                 preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO,
@@ -176,7 +163,6 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
                 aggregation=request.options.aggregation if request.options else AggregationType.MEAN
             )
 
-        # Calculate processing time.
         processing_time = (time.time() - start_time) * 1000
 
         return VideoResponse(
