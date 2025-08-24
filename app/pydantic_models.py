@@ -4,7 +4,7 @@ Pydantic models for request and response validation.
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class InputType(str, Enum):
@@ -72,7 +72,7 @@ class MultipleImagesRequest(BaseModel):
         description="Prediction options"
     )
 
-    @validator("inputs")
+    @field_validator("inputs", mode="before")
     @classmethod
     def inputs_not_empty(cls, v: List[InputData]) -> List[InputData]:
         """Validate that inputs list is not empty."""
