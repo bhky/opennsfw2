@@ -4,8 +4,9 @@ Prediction service for OpenNSFW2 model.
 from typing import List, Optional, Tuple, Union, Sequence
 from threading import Lock
 
-from PIL import Image
 import opennsfw2 as n2
+from keras import Model
+from PIL import Image
 
 from ..pydantic_models import PreprocessingType, AggregationType
 
@@ -15,7 +16,7 @@ class PredictionService:
 
     _instance: Optional["PredictionService"] = None
     _lock = Lock()
-    _model: Optional[object] = None
+    _model: Optional[Model] = None
     _model_loaded: bool = False
 
     def __new__(cls) -> "PredictionService":
