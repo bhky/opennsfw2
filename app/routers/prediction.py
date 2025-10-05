@@ -7,14 +7,19 @@ from typing import List
 from fastapi import APIRouter, HTTPException, status
 from PIL import Image
 
-import opennsfw2
+import opennsfw2 as n2
 from ..pydantic_models import (
-    SingleImageRequest, SingleImageResponse, 
-    MultipleImagesRequest, MultipleImagesResponse,
-    VideoRequest, VideoResponse,
-    ErrorResponse, PredictionResult, VideoResult,
-    PreprocessingType, AggregationType
+    ErrorResponse,
+    MultipleImagesRequest,
+    MultipleImagesResponse,
+    PredictionResult,
+    SingleImageRequest,
+    SingleImageResponse,
+    VideoRequest,
+    VideoResponse,
+    VideoResult,
 )
+
 from ..services.prediction_service import PredictionService
 from ..services.file_service import FileService
 from ..utils.exceptions import InvalidInputError, DownloadError
@@ -44,7 +49,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
 
         sfw_prob, nsfw_prob = service.predict_image(
             processed_input,
-            preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO
+            preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO
         )
 
         processing_time = (time.time() - start_time) * 1000
@@ -56,7 +61,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
                 sfw_probability=sfw_prob
             ),
             processing_time_ms=processing_time,
-            version=opennsfw2.__version__
+            version=n2.__version__
         )
 
     except InvalidInputError as e:
@@ -102,7 +107,7 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
 
         predictions = service.predict_images(
             processed_inputs,
-            preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO
+            preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO
         )
 
         results = []
@@ -118,7 +123,7 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
             success=True,
             results=results,
             processing_time_ms=processing_time,
-            version=opennsfw2.__version__
+            version=n2.__version__
         )
 
     except InvalidInputError as e:
@@ -157,10 +162,10 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
         with FileService.process_video_input(request.input) as video_path:
             elapsed_seconds, nsfw_probabilities = service.predict_video(
                 video_path,
-                preprocessing=request.options.preprocessing if request.options else PreprocessingType.YAHOO,
+                preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO,
                 frame_interval=request.options.frame_interval if request.options else 8,
                 aggregation_size=request.options.aggregation_size if request.options else 8,
-                aggregation=request.options.aggregation if request.options else AggregationType.MEAN
+                aggregation=request.options.aggregation if request.options else n2.Aggregation.MEAN
             )
 
         processing_time = (time.time() - start_time) * 1000
@@ -172,7 +177,7 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
                 nsfw_probabilities=nsfw_probabilities
             ),
             processing_time_ms=processing_time,
-            version=opennsfw2.__version__
+            version=n2.__version__
         )
 
     except InvalidInputError as e:

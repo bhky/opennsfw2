@@ -4,6 +4,7 @@ Pydantic models for request and response validation.
 from enum import Enum
 from typing import List, Optional
 
+from opennsfw2 import Aggregation, Preprocessing
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -12,33 +13,21 @@ class InputType(str, Enum):
     BASE64 = "base64"
 
 
-class PreprocessingType(str, Enum):
-    YAHOO = "YAHOO"
-    SIMPLE = "SIMPLE"
-
-
-class AggregationType(str, Enum):
-    MEAN = "MEAN"
-    MEDIAN = "MEDIAN"
-    MAX = "MAX"
-    MIN = "MIN"
-
-
 class InputData(BaseModel):
     type: InputType = Field(..., description="Type of input data")
     data: str = Field(..., description="URL or base64 data")
 
 
 class ImageOptions(BaseModel):
-    preprocessing: PreprocessingType = Field(
-        default=PreprocessingType.YAHOO,
+    preprocessing: Preprocessing = Field(
+        default=Preprocessing.YAHOO,
         description="Preprocessing method"
     )
 
 
 class VideoOptions(BaseModel):
-    preprocessing: PreprocessingType = Field(
-        default=PreprocessingType.YAHOO,
+    preprocessing: Preprocessing = Field(
+        default=Preprocessing.YAHOO,
         description="Preprocessing method"
     )
     frame_interval: int = Field(
@@ -51,8 +40,8 @@ class VideoOptions(BaseModel):
         ge=1,
         description="Number of frames for aggregation"
     )
-    aggregation: AggregationType = Field(
-        default=AggregationType.MEAN,
+    aggregation: Aggregation = Field(
+        default=Aggregation.MEAN,
         description="Aggregation method"
     )
 

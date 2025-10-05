@@ -8,7 +8,7 @@ import opennsfw2 as n2
 from keras import Model
 from PIL import Image
 
-from ..pydantic_models import PreprocessingType, AggregationType
+from ..pydantic_models import Aggregation, Preprocessing
 
 
 class PredictionService:
@@ -45,7 +45,7 @@ class PredictionService:
     def predict_image(
         self,
         image: Union[str, Image.Image],
-        preprocessing: PreprocessingType = PreprocessingType.YAHOO
+        preprocessing: Preprocessing = Preprocessing.YAHOO
     ) -> Tuple[float, float]:
         """
         Predict NSFW probability for a single image.
@@ -60,17 +60,8 @@ class PredictionService:
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Convert preprocessing enum to opennsfw2 enum.
-        preprocessing_method = (
-            n2.Preprocessing.YAHOO if preprocessing == PreprocessingType.YAHOO
-            else n2.Preprocessing.SIMPLE
-        )
-
         # Get prediction.
-        nsfw_prob = n2.predict_image(
-            image,
-            preprocessing=preprocessing_method
-        )
+        nsfw_prob = n2.predict_image(image, preprocessing=preprocessing)
         sfw_prob = 1.0 - nsfw_prob
 
         return sfw_prob, nsfw_prob
@@ -78,7 +69,7 @@ class PredictionService:
     def predict_images(
         self,
         images: Sequence[Union[str, Image.Image]],
-        preprocessing: PreprocessingType = PreprocessingType.YAHOO
+        preprocessing: Preprocessing = Preprocessing.YAHOO
     ) -> List[Tuple[float, float]]:
         """
         Predict NSFW probabilities for multiple images.
@@ -93,17 +84,8 @@ class PredictionService:
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Convert preprocessing enum to opennsfw2 enum.
-        preprocessing_method = (
-            n2.Preprocessing.YAHOO if preprocessing == PreprocessingType.YAHOO
-            else n2.Preprocessing.SIMPLE
-        )
-
         # Get predictions.
-        nsfw_probs = n2.predict_images(
-            images,  # type: ignore[arg-type]
-            preprocessing=preprocessing_method
-        )
+        nsfw_probs = n2.predict_images(images, preprocessing=preprocessing)
 
         # Convert to (sfw, nsfw) tuples.
         results = []
@@ -116,10 +98,10 @@ class PredictionService:
     def predict_video(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         video_path: str,
-        preprocessing: PreprocessingType = PreprocessingType.YAHOO,
+        preprocessing: Preprocessing = Preprocessing.YAHOO,
         frame_interval: int = 8,
         aggregation_size: int = 8,
-        aggregation: AggregationType = AggregationType.MEAN
+        aggregation: Aggregation = Aggregation.MEAN
     ) -> Tuple[List[float], List[float]]:
         """
         Predict NSFW probabilities for video frames.
@@ -137,22 +119,14 @@ class PredictionService:
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Convert enums to opennsfw2 enums.
-        preprocessing_method = (
-            n2.Preprocessing.YAHOO if preprocessing == PreprocessingType.YAHOO
-            else n2.Preprocessing.SIMPLE
-        )
-
-        aggregation_method = getattr(n2.Aggregation, aggregation.value)
-
         # Get predictions.
         elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
             video_path,
             frame_interval=frame_interval,
             aggregation_size=aggregation_size,
-            aggregation=aggregation_method,
-            preprocessing=preprocessing_method,
-            progress_bar=False  # Disable progress bar for API
+            aggregation=aggregation,
+            preprocessing=preprocessing,
+            progress_bar=False  # Disable progress bar for API.
         )
 
         return elapsed_seconds, nsfw_probabilities
