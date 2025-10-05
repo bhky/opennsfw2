@@ -20,8 +20,10 @@ class PredictionService:
     _model_loaded: bool = False
 
     def __new__(cls) -> "PredictionService":
+        # Double-Checked locking.
         if cls._instance is None:
             with cls._lock:
+                # Double-check for thread safety.
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
                     cls._instance._initialize_model()
