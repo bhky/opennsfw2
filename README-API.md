@@ -219,6 +219,5 @@ Error response format:
 - `OPENNSFW2_HOME`: Directory for model weights (default: `~/.opennsfw2`)
 
 ### File Limits
-- Maximum file size: 100MB
 - Supported image formats: JPEG, PNG, GIF, BMP, TIFF (via Pillow)
 - Supported video formats: MP4, AVI, MOV, etc. (via OpenCV)

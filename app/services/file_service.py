@@ -63,17 +63,10 @@ class FileService:
             response = requests.get(url, timeout=timeout, headers=headers, stream=True)
             response.raise_for_status()
 
-            # Check content length if available.
-            content_length = response.headers.get("content-length")
-            if content_length and int(content_length) > 100 * 1024 * 1024:  # 100MB limit
-                raise DownloadError("File too large (>100MB)")
-
             # Download content.
             content = b""
             for chunk in response.iter_content(chunk_size=8192):
                 content += chunk
-                if len(content) > 100 * 1024 * 1024:  # 100MB limit
-                    raise DownloadError("File too large (>100MB)")
 
             return content
 
@@ -147,6 +140,8 @@ class FileService:
             content = FileService.download_from_url(input_data.data)
         elif input_data.type == InputType.BASE64:
             content = FileService.decode_base64(input_data.data)
+        else:
+            raise InvalidInputError(f"Unsupported input type: {input_data.type}")
 
         # Try to open as image first.
         try:
@@ -175,6 +170,8 @@ class FileService:
             content = FileService.download_from_url(input_data.data)
         elif input_data.type == InputType.BASE64:
             content = FileService.decode_base64(input_data.data)
+        else:
+            raise InvalidInputError(f"Unsupported input type: {input_data.type}")
 
         # Use generic suffix for video files.
         with FileService.get_temp_file(content, suffix=".mp4") as temp_path:
