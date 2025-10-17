@@ -46,7 +46,7 @@ class PredictionService:
         self,
         image: Union[str, Image.Image],
         preprocessing: Preprocessing = Preprocessing.YAHOO
-    ) -> Tuple[float, float]:
+    ) -> float:
         """
         Predict NSFW probability for a single image.
 
@@ -55,22 +55,18 @@ class PredictionService:
             preprocessing: Preprocessing method to use.
 
         Returns:
-            Tuple of (sfw_probability, nsfw_probability).
+            NSFW probability.
         """
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Get prediction.
-        nsfw_prob = n2.predict_image(image, preprocessing=preprocessing)
-        sfw_prob = 1.0 - nsfw_prob
-
-        return sfw_prob, nsfw_prob
+        return n2.predict_image(image, preprocessing=preprocessing)
 
     def predict_images(
         self,
         images: Sequence[Union[str, Image.Image]],
         preprocessing: Preprocessing = Preprocessing.YAHOO
-    ) -> List[Tuple[float, float]]:
+    ) -> List[float]:
         """
         Predict NSFW probabilities for multiple images.
 
@@ -79,21 +75,12 @@ class PredictionService:
             preprocessing: Preprocessing method to use.
 
         Returns:
-            List of tuples of (sfw_probability, nsfw_probability).
+            List of NSFW probabilities.
         """
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Get predictions.
-        nsfw_probs = n2.predict_images(images, preprocessing=preprocessing)
-
-        # Convert to (sfw, nsfw) tuples.
-        results = []
-        for nsfw_prob in nsfw_probs:
-            sfw_prob = 1.0 - nsfw_prob
-            results.append((sfw_prob, nsfw_prob))
-
-        return results
+        return n2.predict_images(images, preprocessing=preprocessing)
 
     def predict_video(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,

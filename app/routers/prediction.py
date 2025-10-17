@@ -47,7 +47,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
         if not isinstance(processed_input, Image.Image):
             raise InvalidInputError("Input is not a valid image.")
 
-        sfw_prob, nsfw_prob = service.predict_image(
+        nsfw_prob = service.predict_image(
             processed_input,
             preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO
         )
@@ -56,10 +56,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
 
         return SingleImageResponse(
             success=True,
-            result=PredictionResult(
-                nsfw_probability=nsfw_prob,
-                sfw_probability=sfw_prob
-            ),
+            result=PredictionResult(nsfw_probability=nsfw_prob),
             processing_time_ms=processing_time,
             version=n2.__version__
         )
@@ -105,17 +102,15 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
 
             processed_inputs.append(processed_input)
 
-        predictions = service.predict_images(
+        nsfw_probs = service.predict_images(
             processed_inputs,
             preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO
         )
 
-        results = []
-        for sfw_prob, nsfw_prob in predictions:
-            results.append(PredictionResult(
-                nsfw_probability=nsfw_prob,
-                sfw_probability=sfw_prob
-            ))
+        results = [
+            PredictionResult(nsfw_probability=nsfw_prob)
+            for nsfw_prob in nsfw_probs
+        ]
 
         processing_time = (time.time() - start_time) * 1000
 

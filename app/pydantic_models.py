@@ -80,7 +80,6 @@ class VideoRequest(BaseModel):
 
 class PredictionResult(BaseModel):
     nsfw_probability: float = Field(..., description="NSFW probability")
-    sfw_probability: float = Field(..., description="SFW probability")
 
 
 class VideoResult(BaseModel):

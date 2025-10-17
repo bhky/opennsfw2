@@ -178,8 +178,7 @@ For images:
 {
   "success": true,
   "result": {
-    "nsfw_probability": 0.85,
-    "sfw_probability": 0.15
+    "nsfw_probability": 0.85
   },
   "processing_time_ms": 245.5,
   "version": "<version>"
