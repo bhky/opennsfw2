@@ -2,7 +2,7 @@
 Image utilities.
 """
 import io
-from enum import auto, Enum
+from enum import Enum
 
 import numpy as np
 import skimage.io  # type: ignore
@@ -11,9 +11,9 @@ from PIL import Image  # type: ignore
 from ._typing import NDFloat32Array
 
 
-class Preprocessing(Enum):
-    YAHOO = auto()
-    SIMPLE = auto()
+class Preprocessing(str, Enum):
+    YAHOO = "YAHOO"
+    SIMPLE = "SIMPLE"
 
 
 def preprocess_image(

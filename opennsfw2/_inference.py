@@ -1,7 +1,7 @@
 """
 Inference utilities.
 """
-from enum import auto, Enum
+from enum import Enum
 from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import cv2
@@ -118,10 +118,10 @@ def predict_images(
 
 
 class Aggregation(str, Enum):
-    MEAN = auto()
-    MEDIAN = auto()
-    MAX = auto()
-    MIN = auto()
+    MEAN = "MEAN"
+    MEDIAN = "MEDIAN"
+    MAX = "MAX"
+    MIN = "MIN"
 
 
 def _get_aggregation_fn(
