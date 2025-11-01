@@ -46,6 +46,10 @@ def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> Non
     }
     
     response = requests.post(f"{base_url}/predict/image", json=payload)
+    if response.status_code != 200:
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.text}")
+        response.raise_for_status()
     assert response.status_code == 200
     
     data = response.json()
@@ -82,6 +86,10 @@ def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> 
     }
     
     response = requests.post(f"{base_url}/predict/images", json=payload)
+    if response.status_code != 200:
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.text}")
+        response.raise_for_status()
     assert response.status_code == 200
     
     data = response.json()
