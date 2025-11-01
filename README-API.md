@@ -7,20 +7,20 @@ A FastAPI-based HTTP service for NSFW content detection using the OpenNSFW2 libr
 ### Using Docker (Recommended)
 
 ```bash
-# Build and run
+# Build and run.
 docker build -t opennsfw2-api .
 docker run -p 8000:8000 opennsfw2-api
 
-# Or use docker-compose
+# Alternatively, use docker-compose.
 docker compose up opennsfw2-api
 ```
 
 ### Direct Installation
 ```bash
-# Install dependencies
+# Install dependencies.
 pip install -r requirements-api.txt
 
-# Run the API
+# Run the API.
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -117,7 +117,7 @@ curl -X POST "http://localhost:8000/predict/video" \
 import requests
 import base64
 
-# Single image prediction
+# Single image prediction.
 def predict_image_url(url: str) -> dict:
     response = requests.post(
         "http://localhost:8000/predict/image",
@@ -130,7 +130,7 @@ def predict_image_url(url: str) -> dict:
     )
     return response.json()
 
-# Base64 image prediction
+# Base64 image prediction.
 def predict_image_base64(image_path: str) -> dict:
     with open(image_path, "rb") as f:
         image_data = base64.b64encode(f.read()).decode()
@@ -146,7 +146,7 @@ def predict_image_base64(image_path: str) -> dict:
     )
     return response.json()
 
-# Usage
+# Usage.
 result = predict_image_url("https://example.com/image.jpg")
 print(f"NSFW probability: {result['result']['nsfw_probability']}")
 ```
