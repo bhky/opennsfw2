@@ -12,7 +12,7 @@ docker build -t opennsfw2-api .
 docker run -p 8000:8000 opennsfw2-api
 
 # Or use docker-compose
-docker-compose up opennsfw2-api
+docker compose up opennsfw2-api
 ```
 
 ### Direct Installation
