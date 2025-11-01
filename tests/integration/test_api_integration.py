@@ -31,9 +31,9 @@ def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> Non
     """Test image prediction with base64 input."""
     print("Testing image prediction with base64...")
     
-    # Create a simple 1x1 red pixel PNG in base64.
-    # This is a valid PNG image.
-    red_pixel_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77gwAAAABJRU5ErkJggg=="
+    # Create a simple 3x3 red pixel PNG in base64.
+    # This is a valid PNG image that can be fully loaded and processed.
+    red_pixel_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAIAAADZSiLoAAAAEElEQVR4nGP8zwAFTAyYLAAdWwEFNX6VDAAAAABJRU5ErkJggg=="
     
     payload = {
         "input": {
@@ -65,9 +65,10 @@ def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> 
     """Test multiple images prediction."""
     print("Testing multiple images prediction...")
     
-    # Create two simple 1x1 pixel PNGs in base64.
-    red_pixel = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77gwAAAABJRU5ErkJggg=="
-    blue_pixel = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8r8fwHwAJJgKJoKhwOwAAAABJRU5ErkJggg=="
+    # Create two simple 3x3 pixel PNGs in base64.
+    # These are valid PNG images that can be fully loaded and processed.
+    red_pixel = "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAIAAADZSiLoAAAAEElEQVR4nGP8zwAFTAyYLAAdWwEFNX6VDAAAAABJRU5ErkJggg=="
+    blue_pixel = "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAIAAADZSiLoAAAAF0lEQVR4nGNkYPjPwMDAwMDAxAADCBYAG10BBdmz9y8AAAAASUVORK5CYII="
     
     payload = {
         "inputs": [
