@@ -1,7 +1,7 @@
 """
 Inference utilities.
 """
-from enum import auto, Enum
+from enum import Enum
 from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
 import cv2
@@ -118,10 +118,10 @@ def predict_images(
 
 
 class Aggregation(str, Enum):
-    MEAN = auto()
-    MEDIAN = auto()
-    MAX = auto()
-    MIN = auto()
+    MEAN = "MEAN"
+    MEDIAN = "MEDIAN"
+    MAX = "MAX"
+    MIN = "MIN"
 
 
 def _get_aggregation_fn(
@@ -167,7 +167,7 @@ def predict_video_frames(
     """
     Make prediction for each video frame.
     """
-    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
+    cap = cv2.VideoCapture(video_path)  # type: ignore[call-arg]  # pylint: disable=no-member
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
     _update_global_model_if_needed(weights_path)

@@ -24,8 +24,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install tools
         run: |
-          python3 -m pip install pylint
-          python3 -m pip install mypy
+          python3 -m pip install -r requirements-dev.txt
           python3 -m pip install ${{ matrix.packages }}
       - name: Test
         run: |

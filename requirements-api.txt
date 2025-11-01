@@ -1,0 +1,17 @@
+# Core dependencies from the library.
+gdown>=4.2.0
+keras>=3.0.0
+matplotlib>=3.0.0
+numpy>=1.22.0
+opencv-python>=4.0.0.0
+Pillow>=8.0.0
+scikit-image>=0.21.0
+tensorflow-cpu==2.20.0
+tqdm>=4.62
+
+# API-specific dependencies.
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+requests>=2.31.0
+python-multipart>=0.0.6
