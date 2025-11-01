@@ -7,10 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    environment:
-      - OPENNSFW2_HOME=/app/.opennsfw2
     volumes:
-      - model_weights:/app/.opennsfw2
+      - model_weights:/home/appuser/.opennsfw2
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
