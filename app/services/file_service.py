@@ -146,9 +146,10 @@ class FileService:
         # Try to open as image first.
         try:
             image = Image.open(io.BytesIO(content))
-            image.verify()  # Verify it's a valid image.
-            # Reopen after verify (verify() closes the file).
-            image = Image.open(io.BytesIO(content))
+            # Verify we can read basic image info (format).
+            # Don't fully load the image here - that will happen during processing.
+            if image.format is None:
+                raise ValueError("Unknown image format")
             return image
         except Exception:
             # If not an image, assume it's a video and return as bytes.
