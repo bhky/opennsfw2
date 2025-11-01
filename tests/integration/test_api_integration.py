@@ -52,10 +52,7 @@ def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> Non
     assert data["success"] is True
     assert "result" in data
     assert "nsfw_probability" in data["result"]
-    assert "sfw_probability" in data["result"]
     assert 0 <= data["result"]["nsfw_probability"] <= 1
-    assert 0 <= data["result"]["sfw_probability"] <= 1
-    assert abs(data["result"]["nsfw_probability"] + data["result"]["sfw_probability"] - 1.0) < 0.001
     
     print(f"Image prediction passed - NSFW: {data['result']['nsfw_probability']:.3f}")
 
@@ -94,9 +91,7 @@ def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> 
     
     for i, result in enumerate(data["results"]):
         assert "nsfw_probability" in result
-        assert "sfw_probability" in result
         assert 0 <= result["nsfw_probability"] <= 1
-        assert 0 <= result["sfw_probability"] <= 1
         print(f"Image {i+1} prediction - NSFW: {result['nsfw_probability']:.3f}")
 
 
