@@ -253,3 +253,7 @@ This implementation provides the following preprocessing options.
   - Convert to a NumPy image.
   - Swap the colour channels to BGR.
   - Subtract the training dataset mean value of each channel: `[104, 117, 123]`.
+
+# HTTP service
+
+See the [HTTP service README](README-HTTP.md).
