@@ -11,7 +11,7 @@ A FastAPI-based HTTP service for NSFW content detection using the OpenNSFW2 libr
 docker build -t opennsfw2-api .
 docker run -p 8000:8000 opennsfw2-api
 
-# Alternatively, use docker-compose.
+# Alternatively, use `docker compose`.
 docker compose up opennsfw2-api
 ```
 
