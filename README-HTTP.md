@@ -169,14 +169,12 @@ print(f"NSFW probability: {result['result']['nsfw_probability']}")
 ### Response Format
 
 All successful responses include:
-- `success`: Boolean indicating success
 - `processing_time_ms`: Processing time in milliseconds
 - `version`: OpenNSFW2 package version
 
 For images:
 ```json
 {
-  "success": true,
   "result": {
     "nsfw_probability": 0.85
   },
@@ -188,7 +186,6 @@ For images:
 For videos:
 ```json
 {
-  "success": true,
   "result": {
     "elapsed_seconds": [0.0, 0.125, 0.25, ...],
     "nsfw_probabilities": [0.1, 0.15, 0.8, ...]

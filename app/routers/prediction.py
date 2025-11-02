@@ -55,7 +55,6 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
         processing_time = (time.time() - start_time) * 1000
 
         return SingleImageResponse(
-            success=True,
             result=PredictionResult(nsfw_probability=nsfw_prob),
             processing_time_ms=processing_time,
             version=n2.__version__
@@ -115,7 +114,6 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
         processing_time = (time.time() - start_time) * 1000
 
         return MultipleImagesResponse(
-            success=True,
             results=results,
             processing_time_ms=processing_time,
             version=n2.__version__
@@ -166,7 +164,6 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
         processing_time = (time.time() - start_time) * 1000
 
         return VideoResponse(
-            success=True,
             result=VideoResult(
                 elapsed_seconds=elapsed_seconds,
                 nsfw_probabilities=nsfw_probabilities

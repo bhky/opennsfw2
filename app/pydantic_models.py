@@ -88,21 +88,18 @@ class VideoResult(BaseModel):
 
 
 class SingleImageResponse(BaseModel):
-    success: bool = Field(..., description="Whether the prediction was successful")
     result: PredictionResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
     version: str = Field(..., description="OpenNSFW2 package version")
 
 
 class MultipleImagesResponse(BaseModel):
-    success: bool = Field(..., description="Whether the prediction was successful")
     results: List[PredictionResult] = Field(..., description="Prediction results")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
     version: str = Field(..., description="OpenNSFW2 package version")
 
 
 class VideoResponse(BaseModel):
-    success: bool = Field(..., description="Whether the prediction was successful")
     result: VideoResult = Field(..., description="Prediction result")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
     version: str = Field(..., description="OpenNSFW2 package version")

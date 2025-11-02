@@ -53,7 +53,6 @@ def test_image_prediction_base64(base_url: str = "http://localhost:8000") -> Non
     assert response.status_code == 200
     
     data = response.json()
-    assert data["success"] is True
     assert "result" in data
     assert "nsfw_probability" in data["result"]
     assert 0 <= data["result"]["nsfw_probability"] <= 1
@@ -94,7 +93,6 @@ def test_multiple_images_prediction(base_url: str = "http://localhost:8000") -> 
     assert response.status_code == 200
     
     data = response.json()
-    assert data["success"] is True
     assert "results" in data
     assert len(data["results"]) == 2
     
