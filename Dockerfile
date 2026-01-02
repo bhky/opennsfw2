@@ -27,9 +27,11 @@ USER appuser
 # Weights path: /home/appuser/.opennsfw2/weights/open_nsfw_weights.h5
 RUN python -c "import opennsfw2; opennsfw2.make_open_nsfw_model()" || echo "Model download failed, will retry at runtime"
 
-EXPOSE 8000
+# Cloud Run sets PORT env var, default to 8080
+ENV PORT=8080
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health/ || exit 1
+    CMD curl -f http://localhost:${PORT}/health/ || exit 1
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
