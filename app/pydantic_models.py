@@ -44,6 +44,17 @@ class VideoOptions(BaseModel):
         default=Aggregation.MEAN,
         description="Aggregation method"
     )
+    nsfw_threshold: float = Field(
+        default=0.80,
+        ge=0.0,
+        le=1.0,
+        description="NSFW probability threshold for flagging frames (0.0-1.0)"
+    )
+    early_termination_count: int = Field(
+        default=10,
+        ge=1,
+        description="Stop processing after this many flagged frames"
+    )
 
 
 class SingleImageRequest(BaseModel):
@@ -82,9 +93,18 @@ class PredictionResult(BaseModel):
     nsfw_probability: float = Field(..., description="NSFW probability")
 
 
+class UsageInfo(BaseModel):
+    frames_processed: int = Field(..., description="Total number of frames processed")
+    frames_flagged: int = Field(..., description="Number of frames flagged as NSFW")
+    early_terminated: bool = Field(..., description="Whether processing was terminated early")
+    nsfw_threshold: float = Field(..., description="NSFW threshold used for flagging")
+    early_termination_trigger: Optional[int] = Field(None, description="Flagged frame count that triggered early termination")
+
+
 class VideoResult(BaseModel):
     elapsed_seconds: List[float] = Field(..., description="Elapsed seconds for each frame")
     nsfw_probabilities: List[float] = Field(..., description="NSFW probabilities for each frame")
+    usage_info: UsageInfo = Field(..., description="Processing usage information")
 
 
 class SingleImageResponse(BaseModel):
