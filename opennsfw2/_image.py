@@ -35,6 +35,8 @@ def preprocess_image(
             (256, 256), resample=Image.BILINEAR  # pylint: disable=no-member
         )
 
+        # This step, migrated from the original TF1 version, is probably for introducing
+        # JPEG compression artifacts to match the original Caffe data pipeline.
         fh_im = io.BytesIO()
         pil_image_resized.save(fh_im, format="JPEG")
         fh_im.seek(0)
@@ -75,7 +77,10 @@ def preprocess_image_tensor(
     for use with dataset pipelines (e.g., tf.data.Dataset.map).
 
     Expects a single uint8 tensor of shape (H, W, C) in RGB channel order.
-    The JPEG round-trip from the YAHOO pipeline is intentionally omitted.
+
+    The JPEG round-trip from the YAHOO pipeline is intentionally omitted,
+    because this is a lossy and non-differentiable step that makes no sense
+    in training.
     """
     image = keras.ops.cast(image, "float32")
 
