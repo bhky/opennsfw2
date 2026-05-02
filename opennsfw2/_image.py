@@ -83,13 +83,13 @@ def preprocess_image_tensor(
         image = keras.ops.image.resize(image, (256, 256), interpolation="bilinear")
         h_off = (256 - 224) // 2
         w_off = (256 - 224) // 2
-        image = image[h_off:h_off + 224, w_off:w_off + 224, :]
+        image = image[h_off:h_off + 224, w_off:w_off + 224, :]  # type: ignore
 
     elif preprocessing == Preprocessing.SIMPLE:
         image = keras.ops.image.resize(image, (224, 224), interpolation="bilinear")
 
     # RGB to BGR.
-    image = image[..., ::-1]
+    image = image[..., ::-1]  # type: ignore
 
     vgg_mean = keras.ops.cast([104, 117, 123], "float32")
-    return image - vgg_mean
+    return image - vgg_mean  # type: ignore
