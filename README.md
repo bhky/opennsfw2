@@ -132,6 +132,17 @@ Apply necessary preprocessing to the input image.
 - Return:
   - NumPy array of shape `(224, 224, 3)`.
 
+### `preprocess_image_tensor`
+Tensor-based preprocessing equivalent of `preprocess_image`, suitable for use with
+dataset pipelines (e.g., `tf.data.Dataset.map`).
+Note that the JPEG round-trip in the `YAHOO` pipeline is intentionally omitted.
+- Parameters:
+  - `image` (Keras tensor of shape `(H, W, C)`, `uint8`): Input as a single RGB image tensor.
+  - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`):
+    See [preprocessing details](#preprocessing-details).
+- Return:
+  - Keras tensor of shape `(224, 224, 3)`.
+
 ### `Preprocessing`
 Enum class for preprocessing options.
 - `Preprocessing.YAHOO`

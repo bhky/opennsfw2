@@ -4,11 +4,12 @@ Image utilities.
 import io
 from enum import Enum
 
+import keras  # type: ignore
 import numpy as np
 import skimage.io  # type: ignore
 from PIL import Image  # type: ignore
 
-from ._typing import NDFloat32Array
+from ._typing import KerasTensor, NDFloat32Array
 
 
 class Preprocessing(str, Enum):
@@ -63,3 +64,32 @@ def preprocess_image(
     image = image - np.array(vgg_mean, dtype=np.float32)
 
     return image
+
+
+def preprocess_image_tensor(
+        image: KerasTensor,
+        preprocessing: Preprocessing = Preprocessing.YAHOO
+) -> KerasTensor:
+    """
+    Tensor-based preprocessing equivalent of `preprocess_image`, suitable
+    for use with dataset pipelines (e.g., tf.data.Dataset.map).
+
+    Expects a single uint8 tensor of shape (H, W, C) in RGB channel order.
+    The JPEG round-trip from the YAHOO pipeline is intentionally omitted.
+    """
+    image = keras.ops.cast(image, "float32")
+
+    if preprocessing == Preprocessing.YAHOO:
+        image = keras.ops.image.resize(image, (256, 256), interpolation="bilinear")
+        h_off = (256 - 224) // 2
+        w_off = (256 - 224) // 2
+        image = image[h_off:h_off + 224, w_off:w_off + 224, :]
+
+    elif preprocessing == Preprocessing.SIMPLE:
+        image = keras.ops.image.resize(image, (224, 224), interpolation="bilinear")
+
+    # RGB to BGR.
+    image = image[..., ::-1]
+
+    vgg_mean = keras.ops.cast([104, 117, 123], "float32")
+    return image - vgg_mean
