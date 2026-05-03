@@ -94,6 +94,8 @@ elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(video_path)
 
 ## Lower level with Keras
 
+### Inference
+
 ```python
 import numpy as np
 import opennsfw2 as n2
@@ -121,6 +123,52 @@ predictions = model.predict(inputs)
 sfw_probability, nsfw_probability = predictions[0]
 ```
 
+### Training / Fine-tuning with TensorFlow backend
+
+```python
+import opennsfw2 as n2
+import tensorflow as tf
+
+# Prepare a list of image file paths and corresponding labels.
+# Labels: 0 for SFW, 1 for NSFW.
+image_paths = [
+  "path/to/your/image1.jpg",
+  "path/to/your/image2.jpg",
+  # ...
+]
+labels = [0, 1, ...]
+
+# Build a tf.data pipeline with per-sample preprocessing.
+dataset = tf.data.Dataset.from_tensor_slices((image_paths, labels))
+
+def load_and_preprocess(image_path, label):
+  image = tf.io.read_file(image_path)
+  image = tf.io.decode_jpeg(image, channels=3)
+  # The preprocessed image is a tensor of shape (224, 224, 3).
+  image = n2.preprocess_image_tensor(image, n2.Preprocessing.YAHOO)
+  return image, label
+
+dataset = (
+  dataset
+  .map(load_and_preprocess, num_parallel_calls=tf.data.AUTOTUNE)
+  .batch(32)
+  .prefetch(tf.data.AUTOTUNE)
+)
+
+# For fine-tuning, load the pre-trained weights (default behaviour).
+# For training from scratch, pass weights_path=None.
+model = n2.make_open_nsfw_model()
+
+# Compile and train.
+model.compile(
+  optimizer="adam",
+  loss="sparse_categorical_crossentropy",
+  metrics=["accuracy"],
+)
+model.fit(dataset, epochs=10)
+```
+
+
 # API
 
 ### `preprocess_image`
@@ -131,6 +179,17 @@ Apply necessary preprocessing to the input image.
     See [preprocessing details](#preprocessing-details).
 - Return:
   - NumPy array of shape `(224, 224, 3)`.
+
+### `preprocess_image_tensor`
+Tensor-based preprocessing equivalent of `preprocess_image`, suitable for use with
+dataset pipelines (e.g., `tf.data.Dataset.map`).
+Note that the JPEG round-trip in the `YAHOO` pipeline is intentionally omitted.
+- Parameters:
+  - `image` (Keras tensor of shape `(H, W, C)`, `uint8`): Input as a single RGB image tensor.
+  - `preprocessing` (`Preprocessing` enum, default `Preprocessing.YAHOO`):
+    See [preprocessing details](#preprocessing-details).
+- Return:
+  - Keras tensor of shape `(224, 224, 3)`.
 
 ### `Preprocessing`
 Enum class for preprocessing options.
