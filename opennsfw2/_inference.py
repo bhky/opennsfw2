@@ -4,7 +4,6 @@ Inference utilities.
 from enum import Enum
 from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
-import cv2
 import numpy as np
 from PIL import Image  # type: ignore
 from tqdm import tqdm  # type: ignore
@@ -167,6 +166,8 @@ def predict_video_frames(
     """
     Make prediction for each video frame.
     """
+    import cv2
+
     cap = cv2.VideoCapture(video_path)  # type: ignore[call-arg]  # pylint: disable=no-member
     fps = cap.get(cv2.CAP_PROP_FPS)  # pylint: disable=no-member
 
