@@ -1,5 +1,6 @@
 gdown>=4.2.0
 keras>=3.0.0
+# Alternative: tf-keras>=2.14.0
 matplotlib>=3.0.0
 numpy>=1.22.0
 opencv-python>=4.0.0.0

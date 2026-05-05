@@ -5,7 +5,6 @@ import os
 import unittest
 from typing import Optional, Sequence
 
-from keras import backend as keras_backend
 from PIL import Image
 
 import opennsfw2 as n2
@@ -38,7 +37,7 @@ class TestModel(unittest.TestCase):
                 self.assertTrue(os.path.exists(paths[i]))
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        if keras_backend.backend() == "tensorflow":
+        if n2.keras_backend.backend() == "tensorflow":
             grad_cam_paths = OUTPUT_GRAD_CAM_PATHS
         else:
             grad_cam_paths = None
