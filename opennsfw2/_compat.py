@@ -1,20 +1,33 @@
 """
 Keras compatibility layer supporting Keras 3 and tf-keras.
+
+Set the environment variable OPENNSFW2_KERAS=tf-keras before importing this
+package to force tf-keras even when Keras 3 is also installed.
 """
+import os
 from typing import Any, Tuple
 
-try:
-    import keras  # type: ignore
-    from keras import layers, Model  # type: ignore
-    from keras import backend as keras_backend  # type: ignore
-    from keras.preprocessing.image import array_to_img  # type: ignore  # pylint: disable=import-error
-    _TF_KERAS = False
-except ImportError:
-    import tf_keras as keras  # type: ignore
-    from tf_keras import layers, Model  # type: ignore
-    from tf_keras import backend as keras_backend  # type: ignore
-    from tf_keras.preprocessing.image import array_to_img  # type: ignore
+_FORCE_TF_KERAS = os.environ.get("OPENNSFW2_KERAS", "").strip().lower() == "tf-keras"
+
+if _FORCE_TF_KERAS:
+    import tf_keras as keras  # type: ignore  # pylint: disable=import-error
+    from tf_keras import layers, Model  # type: ignore  # pylint: disable=import-error
+    from tf_keras import backend as keras_backend  # type: ignore  # pylint: disable=import-error
+    from tf_keras.preprocessing.image import array_to_img  # type: ignore  # pylint: disable=import-error
     _TF_KERAS = True
+else:
+    try:
+        import keras  # type: ignore
+        from keras import layers, Model  # type: ignore
+        from keras import backend as keras_backend  # type: ignore
+        from keras.preprocessing.image import array_to_img  # type: ignore  # pylint: disable=import-error
+        _TF_KERAS = False
+    except ImportError:
+        import tf_keras as keras  # type: ignore  # pylint: disable=import-error
+        from tf_keras import layers, Model  # type: ignore  # pylint: disable=import-error
+        from tf_keras import backend as keras_backend  # type: ignore  # pylint: disable=import-error
+        from tf_keras.preprocessing.image import array_to_img  # type: ignore  # pylint: disable=import-error
+        _TF_KERAS = True
 
 
 def ops_cast(x: Any, dtype: str) -> Any:

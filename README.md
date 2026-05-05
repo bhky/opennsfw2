@@ -45,6 +45,12 @@ cd opennsfw2
 python3 -m pip install ".[keras3]"  # or ".[tf-keras]"
 ```
 
+If both Keras versions are installed, Keras 3 is used by default.
+To force tf-keras, set the environment variable before importing:
+```shell
+OPENNSFW2_KERAS=tf-keras python3 your_script.py
+```
+
 A note on the PyTorch backend (Keras 3 only):
 
 The model can run on PyTorch, but inference output differs noticeably from
