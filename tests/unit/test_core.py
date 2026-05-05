@@ -8,6 +8,7 @@ from typing import Optional, Sequence
 from PIL import Image
 
 import opennsfw2 as n2
+from opennsfw2._compat import keras_backend
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGE_PATHS = [
@@ -37,7 +38,7 @@ class TestModel(unittest.TestCase):
                 self.assertTrue(os.path.exists(paths[i]))
 
     def test_predict_images_yahoo_preprocessing(self) -> None:
-        if n2.keras_backend.backend() == "tensorflow":
+        if keras_backend.backend() == "tensorflow":
             grad_cam_paths = OUTPUT_GRAD_CAM_PATHS
         else:
             grad_cam_paths = None
