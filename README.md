@@ -18,38 +18,39 @@ the context, definitions, and model training details.
 This **Open-NSFW 2** project provides a Keras implementation of the
 Yahoo model, with references to its previous third-party 
 [TensorFlow 1 implementation](https://github.com/mdietrichstein/tensorflow-open_nsfw).
-Note that **Keras 3** is compatible with 
-TensorFlow, JAX, and PyTorch. However, currently this model is
-only guaranteed to work with TensorFlow and JAX.
+**Keras 3** (TensorFlow and JAX backends) and **tf-keras** are both supported.
 
 A simple API is provided for making predictions on images and videos.
 
 # Installation
 
-Tested with TensorFlow and JAX, for Python 3.9 to 3.12.
+Tested with Python 3.9 to 3.12.
 
-A note on PyTorch:
+Install with your preferred Keras backend:
 
-The OpenNSFW 2 model can in fact be run on PyTorch, but the biggest issue is 
-that the inference output on PyTorch is quite different from 
-that on TensorFlow and JAX. The reason is still unknown. In addition, 
-inference is much slower on PyTorch probably because of the issues 
-discussed [here](https://keras.io/keras_core/announcement/),
-i.e., PyTorch uses `channels_first` for its image data format, but this model
-uses `channels_last` (as in TensorFLow and JAX), hence Keras has to 
-convert the channel order back and forth at each layer.
-Therefore, at the moment it is not recommended to use PyTorch for this model.
-
-The best way to install Open-NSFW 2 with its dependencies is from PyPI:
+**Keras 3** (TensorFlow or JAX backend):
 ```shell
-python3 -m pip install --upgrade opennsfw2
+python3 -m pip install "opennsfw2[keras3]"
 ```
+
+**tf-keras** (TensorFlow-integrated Keras):
+```shell
+python3 -m pip install "opennsfw2[tf-keras]"
+```
+
 Alternatively, to obtain the latest version from this repository:
 ```shell
 git clone git@github.com:bhky/opennsfw2.git
 cd opennsfw2
-python3 -m pip install .
+python3 -m pip install ".[keras3]"  # or ".[tf-keras]"
 ```
+
+A note on the PyTorch backend (Keras 3 only):
+
+The model can run on PyTorch, but inference output differs noticeably from
+TensorFlow and JAX, and inference is slower due to PyTorch using
+`channels_first` while this model uses `channels_last`.
+Therefore, PyTorch is not recommended.
 
 # Usage
 
@@ -111,7 +112,7 @@ image = n2.preprocess_image(pil_image, n2.Preprocessing.YAHOO)
 # By default, this call will search for the pre-trained weights file from path:
 # $HOME/.opennsfw2/weights/open_nsfw_weights.h5
 # If not exists, the file will be downloaded from this repository.
-# The model is a `keras_core.Model` object.
+# The model is a `keras.Model` object.
 model = n2.make_open_nsfw_model()
 
 # Make predictions.
@@ -210,7 +211,7 @@ Create an instance of the NSFW model, optionally with pre-trained weights from Y
     where the `.opennsfw2/` directory should be located.
   - `name` (`str`, default `opennsfw2`): Model name to be used for the Keras model object.
 - Return:
-  - `tf.keras.Model` object.
+  - `keras.Model` object.
 
 ### `predict_image`
 End-to-end pipeline function from the input image to the predicted NSFW probability.

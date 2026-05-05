@@ -4,11 +4,11 @@ Image utilities.
 import io
 from enum import Enum
 
-import keras  # type: ignore
 import numpy as np
 import skimage.io  # type: ignore
 from PIL import Image  # type: ignore
 
+from ._compat import ops_cast, ops_image_resize
 from ._typing import KerasTensor, NDFloat32Array
 
 
@@ -82,19 +82,19 @@ def preprocess_image_tensor(
     because this is a lossy and non-differentiable step that makes no sense
     in training.
     """
-    image = keras.ops.cast(image, "float32")
+    image = ops_cast(image, "float32")
 
     if preprocessing == Preprocessing.YAHOO:
-        image = keras.ops.image.resize(image, (256, 256), interpolation="bilinear")
+        image = ops_image_resize(image, (256, 256), interpolation="bilinear")
         h_off = (256 - 224) // 2
         w_off = (256 - 224) // 2
         image = image[h_off:h_off + 224, w_off:w_off + 224, :]  # type: ignore
 
     elif preprocessing == Preprocessing.SIMPLE:
-        image = keras.ops.image.resize(image, (224, 224), interpolation="bilinear")
+        image = ops_image_resize(image, (224, 224), interpolation="bilinear")
 
     # RGB to BGR.
     image = image[..., ::-1]  # type: ignore
 
-    vgg_mean = keras.ops.cast([104, 117, 123], "float32")
+    vgg_mean = ops_cast([104, 117, 123], "float32")
     return image - vgg_mean  # type: ignore

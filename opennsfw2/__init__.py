@@ -1,4 +1,5 @@
 # See: https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-no-implicit-reexport
+from ._compat import keras_backend as keras_backend
 from ._image import Preprocessing as Preprocessing
 from ._image import preprocess_image as preprocess_image
 from ._image import preprocess_image_tensor as preprocess_image_tensor
