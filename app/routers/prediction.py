@@ -145,7 +145,7 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
     }
 )
 async def predict_video(request: VideoRequest) -> VideoResponse:
-    """Predict NSFW probabilities for video frames."""
+    """Predict NSFW probabilities for video frames with early termination."""
     start_time = time.time()
 
     try:
@@ -153,12 +153,14 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
 
         # Process video input and get temporary file.
         with FileService.process_video_input(request.input) as video_path:
-            elapsed_seconds, nsfw_probabilities = service.predict_video(
+            elapsed_seconds, nsfw_probabilities, usage_info = service.predict_video(
                 video_path,
                 preprocessing=request.options.preprocessing if request.options else n2.Preprocessing.YAHOO,
                 frame_interval=request.options.frame_interval if request.options else 8,
                 aggregation_size=request.options.aggregation_size if request.options else 8,
-                aggregation=request.options.aggregation if request.options else n2.Aggregation.MEAN
+                aggregation=request.options.aggregation if request.options else n2.Aggregation.MEAN,
+                nsfw_threshold=request.options.nsfw_threshold if request.options else 0.80,
+                early_termination_count=request.options.early_termination_count if request.options else 10
             )
 
         processing_time = (time.time() - start_time) * 1000
@@ -166,7 +168,8 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
         return VideoResponse(
             result=VideoResult(
                 elapsed_seconds=elapsed_seconds,
-                nsfw_probabilities=nsfw_probabilities
+                nsfw_probabilities=nsfw_probabilities,
+                usage_info=usage_info
             ),
             processing_time_ms=processing_time,
             version=n2.__version__

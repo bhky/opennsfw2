@@ -88,10 +88,12 @@ class PredictionService:
         preprocessing: Preprocessing = Preprocessing.YAHOO,
         frame_interval: int = 8,
         aggregation_size: int = 8,
-        aggregation: Aggregation = Aggregation.MEAN
-    ) -> Tuple[List[float], List[float]]:
+        aggregation: Aggregation = Aggregation.MEAN,
+        nsfw_threshold: float = 0.80,
+        early_termination_count: int = 10
+    ) -> Tuple[List[float], List[float], dict]:
         """
-        Predict NSFW probabilities for video frames.
+        Predict NSFW probabilities for video frames with early termination.
 
         Args:
             video_path: Path to video file.
@@ -99,14 +101,16 @@ class PredictionService:
             frame_interval: Prediction interval.
             aggregation_size: Number of frames for aggregation.
             aggregation: Aggregation method.
+            nsfw_threshold: NSFW probability threshold for flagging (default 0.80).
+            early_termination_count: Stop processing after this many flagged frames (default 10).
 
         Returns:
-            Tuple of (elapsed_seconds, nsfw_probabilities).
+            Tuple of (elapsed_seconds, nsfw_probabilities, usage_info).
         """
         if not self._model_loaded:
             raise RuntimeError("Model is not loaded")
 
-        # Get predictions.
+        # Get predictions with early termination.
         elapsed_seconds, nsfw_probabilities = n2.predict_video_frames(
             video_path,
             frame_interval=frame_interval,
@@ -116,4 +120,29 @@ class PredictionService:
             progress_bar=False  # Disable progress bar for API.
         )
 
-        return elapsed_seconds, nsfw_probabilities
+        # Early termination logic: stop if too many frames are flagged.
+        flagged_count = 0
+        early_terminated = False
+        processed_frames = len(nsfw_probabilities)
+
+        for i, prob in enumerate(nsfw_probabilities):
+            if prob >= nsfw_threshold:
+                flagged_count += 1
+                if flagged_count >= early_termination_count:
+                    # Terminate early - trim results to current position.
+                    elapsed_seconds = elapsed_seconds[:i+1]
+                    nsfw_probabilities = nsfw_probabilities[:i+1]
+                    processed_frames = i + 1
+                    early_terminated = True
+                    break
+
+        # Build usage info.
+        usage_info = {
+            "frames_processed": processed_frames,
+            "frames_flagged": flagged_count,
+            "early_terminated": early_terminated,
+            "nsfw_threshold": nsfw_threshold,
+            "early_termination_trigger": early_termination_count if early_terminated else None
+        }
+
+        return elapsed_seconds, nsfw_probabilities, usage_info
