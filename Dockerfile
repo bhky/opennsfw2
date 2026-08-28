@@ -25,11 +25,16 @@ USER appuser
 
 # Pre-download model weights to avoid download during runtime.
 # Weights path: /home/appuser/.opennsfw2/weights/open_nsfw_weights.h5
-RUN python -c "import opennsfw2; opennsfw2.make_open_nsfw_model()" || echo "Model download failed, will retry at runtime"
+# A failure here is tolerated so the image still builds without network access;
+# `download_weights_to` removes a bad file, so the runtime retry can succeed.
+RUN python -c "import opennsfw2; opennsfw2.make_open_nsfw_model()" || \
+    echo "Model download failed, will retry at runtime"
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health/ || exit 1
+# The base image has no curl, so the check uses Python, which is always present.
+# start-period covers a first-run weights download during startup.
+HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/', timeout=10)" || exit 1
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

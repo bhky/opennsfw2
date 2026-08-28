@@ -213,6 +213,8 @@ Error response format:
 
 ### Environment Variables
 - `OPENNSFW2_HOME`: Directory for model weights (default: `~/.opennsfw2`)
+- `OPENNSFW2_DOWNLOAD_DEADLINE_SECONDS`: Total time budget for fetching one
+  input URL, after which the request fails with `400` (default: `120`)
 
 ### File Limits
 - Supported image formats: JPEG, PNG, GIF, BMP, TIFF (via Pillow)
