@@ -29,3 +29,70 @@ jobs:
       - name: Test
         run: |
           ./tests/install_from_local_and_test.sh ${{ matrix.backend }}
+  api:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # tensorflow-cpu has no arm64 wheels, so both architectures are built
+          # to keep the platform markers in requirements-api.txt honest.
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    name: api-${{ matrix.arch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Seed a fake .venv
+        # The build context must stay small, so .dockerignore has to exclude it.
+        run: |
+          mkdir -p .venv
+          dd if=/dev/zero of=.venv/marker bs=1M count=64
+      - name: Build image
+        run: docker build -t opennsfw2-api:ci .
+      - name: Check .venv stayed out of the image
+        run: |
+          if docker run --rm opennsfw2-api:ci sh -c "test -e /app/.venv"; then
+            echo "::error::.venv reached the image, .dockerignore is not excluding it"
+            exit 1
+          fi
+      - name: Start container
+        run: |
+          docker run -d --name opennsfw2-api-ci -p 8000:8000 \
+            --add-host host.docker.internal:host-gateway \
+            -e OPENNSFW2_DOWNLOAD_DEADLINE_SECONDS=10 \
+            opennsfw2-api:ci
+      - name: Wait for the container health check
+        # This is the only step that exercises HEALTHCHECK itself, which needs a
+        # tool that exists in the image.
+        run: |
+          for _ in $(seq 1 40); do
+            health=$(docker inspect --format "{{.State.Health.Status}}" opennsfw2-api-ci)
+            echo "health=${health}"
+            if [ "${health}" = "healthy" ]; then exit 0; fi
+            if [ "${health}" = "unhealthy" ]; then
+              echo "::error::container reported unhealthy"
+              docker inspect --format "{{range .State.Health.Log}}{{.Output}}{{end}}" opennsfw2-api-ci
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "::error::container never became healthy"
+          exit 1
+      - name: Smoke test the API
+        run: |
+          python3 tests/api_smoke.py \
+            --base-url http://127.0.0.1:8000 \
+            --deadline-seconds 10 \
+            --callback-host host.docker.internal
+      - name: Container logs
+        if: failure()
+        run: docker logs opennsfw2-api-ci
+      - name: Check docker compose comes up healthy
+        run: |
+          docker rm -f opennsfw2-api-ci
+          docker compose up -d --wait --wait-timeout 300
+          docker compose down -v
