@@ -6,7 +6,11 @@ numpy>=1.22.0
 opencv-python>=4.0.0.0
 Pillow>=8.0.0
 scikit-image>=0.21.0
-tensorflow-cpu==2.20.0
+# tensorflow-cpu ships no aarch64/arm64 wheels; plain tensorflow is CPU-only
+# on those platforms, so the two lines give the same runtime.
+tensorflow-cpu==2.20.0; platform_machine == "x86_64"
+tensorflow==2.20.0; platform_machine == "aarch64"
+tensorflow==2.20.0; platform_machine == "arm64"
 tqdm>=4.62
 
 # API-specific dependencies.
@@ -14,4 +18,6 @@ fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.0.0
 requests>=2.31.0
+# urllib3 2.3 added HTTPResponse.shutdown(), used to abort a stalled download.
+urllib3>=2.3.0
 python-multipart>=0.0.6

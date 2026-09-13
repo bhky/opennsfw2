@@ -151,6 +151,32 @@ result = predict_image_url("https://example.com/image.jpg")
 print(f"NSFW probability: {result['result']['nsfw_probability']}")
 ```
 
+## Testing
+
+`tests/api_smoke.py` exercises a running service end to end. It covers what the
+library test suite cannot see: the container serving at all, the event loop
+staying free during a slow request, the download deadline firing, and the input
+handling of each endpoint.
+
+```bash
+docker run -d --name opennsfw2-api -p 8000:8000 \
+  --add-host host.docker.internal:host-gateway \
+  -e OPENNSFW2_DOWNLOAD_DEADLINE_SECONDS=10 opennsfw2-api
+
+python3 tests/api_smoke.py \
+  --base-url http://127.0.0.1:8000 \
+  --deadline-seconds 10 \
+  --callback-host host.docker.internal
+```
+
+The script serves a deliberately stalled URL for the target to fetch, so
+`--callback-host` must be the name by which the target reaches your machine.
+Use `host.docker.internal` for a container, or `127.0.0.1` for a local process.
+It needs no dependencies beyond the standard library.
+
+The `api` job in `.github/workflows/ci.yml` runs the same script against a
+freshly built image on both x86_64 and arm64.
+
 ## Request/Response Format
 
 ### Input Types
@@ -213,6 +239,8 @@ Error response format:
 
 ### Environment Variables
 - `OPENNSFW2_HOME`: Directory for model weights (default: `~/.opennsfw2`)
+- `OPENNSFW2_DOWNLOAD_DEADLINE_SECONDS`: Total time budget for fetching one
+  input URL, after which the request fails with `400` (default: `120`)
 
 ### File Limits
 - Supported image formats: JPEG, PNG, GIF, BMP, TIFF (via Pillow)

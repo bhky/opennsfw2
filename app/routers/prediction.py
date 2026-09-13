@@ -35,7 +35,7 @@ router = APIRouter()
         500: {"model": ErrorResponse}
     }
 )
-async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
+def predict_image(request: SingleImageRequest) -> SingleImageResponse:
     """Predict NSFW probability for a single image."""
     start_time = time.time()
 
@@ -85,7 +85,7 @@ async def predict_image(request: SingleImageRequest) -> SingleImageResponse:
         500: {"model": ErrorResponse}
     }
 )
-async def predict_images(request: MultipleImagesRequest) -> MultipleImagesResponse:
+def predict_images(request: MultipleImagesRequest) -> MultipleImagesResponse:
     """Predict NSFW probabilities for multiple images."""
     start_time = time.time()
 
@@ -144,7 +144,7 @@ async def predict_images(request: MultipleImagesRequest) -> MultipleImagesRespon
         500: {"model": ErrorResponse}
     }
 )
-async def predict_video(request: VideoRequest) -> VideoResponse:
+def predict_video(request: VideoRequest) -> VideoResponse:
     """Predict NSFW probabilities for video frames."""
     start_time = time.time()
 
@@ -160,6 +160,9 @@ async def predict_video(request: VideoRequest) -> VideoResponse:
                 aggregation_size=request.options.aggregation_size if request.options else 8,
                 aggregation=request.options.aggregation if request.options else n2.Aggregation.MEAN
             )
+
+        if not nsfw_probabilities:
+            raise InvalidInputError("No video frame could be decoded from the input.")
 
         processing_time = (time.time() - start_time) * 1000
 

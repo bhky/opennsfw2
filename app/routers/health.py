@@ -21,7 +21,7 @@ async def health_check() -> Dict[str, Any]:
 
 
 @router.get("/model")
-async def model_health() -> Dict[str, Any]:
+def model_health() -> Dict[str, Any]:
     """Check if the model is loaded and working."""
     try:
         from ..services.prediction_service import PredictionService
